@@ -1,0 +1,27 @@
+{
+	"manifest_version": 2,
+	"name": "passman",
+	"version": "1.0",
+
+	"description": "WebExtension for password manager!",
+
+	"content_scripts": [
+		{
+			"matches": ["http://*/*", "https://*/*"],
+			"js": ["passman.js"]
+		}
+	],
+
+	"background": {
+		"scripts": ["handler.js"]
+	},
+
+	"applications": {
+		"gecko": {
+			"id": "passman@127.0.0.1",
+			"strict_min_version": "1.0"
+		}
+	},
+
+	"permissions": ["nativeMessaging"]
+}

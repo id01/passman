@@ -1,0 +1,31 @@
+<html>
+<body>
+<form method="post" action="setup.php">
+Username: <input type="text" name="username"><br/>
+Master Key: <input type="password" name="key"><br/>
+Verify: <input type="password" name="key2"><br/>
+ECC Curve:
+<select name="curve">
+<option value="6">Default</option>
+<option value="1">224-bit: Prime Koblitz</option>
+<option value="2">224-bit: Prime Random</option>
+<option value="3">521-bit: Prime Random</option>
+<option value="4">283-bit: Binary Koblitz</option>
+<option value="5">283-bit: Binary Random</option>
+<option value="6">571-bit: Binary Kolbitz (Default)</option>
+<option value="7">571-bit: Binary Random</option>
+</select>
+AES Cipher:
+<select name="aes">
+<option value="4">Default</option>
+<option value="1">128-bit CTR</option>
+<option value="2">256-bit CTR</option>
+<option value="3">128-bit CBC</option>
+<option value="4">256-bit CBC (Default)</option>
+<option value="5">128-bit OFB</option>
+<option value="6">256-bit OFB</option>
+</select><br/>
+<input type="submit" value="submit"><br/>
+</form>
+</body>
+</html>

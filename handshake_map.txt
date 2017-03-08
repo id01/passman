@@ -1,0 +1,42 @@
+This is an explanation of how this protocol works.
+Note: This is a simplified explaination.
+
+C stands for Client, S stands for Server.
+
+Adding password:
+C	S
+|	|
+|======>| (C) Hi Server, I'd like to add a password.
+|	|
+| <=====| (S) Okay sure, sign this with your private asymmetric key.
+|	|
+|======>| (C) Hi Server, I'd like my private and public asymmetric keys.
+|	|
+| <=====| (S) Here is your encrypted private asymmetric key, and your public asymmetric key.
+|	|
+|======>| (C) Hi Server, here is my signature.
+|	|
+|	| (S) Verify signature. If correct, say valid. Else, say incorrect signature and end.
+|	|
+| <=====| (S) Valid/Invalid
+|	|
+|	| (C) Was the signature approved? If yes, generate password. Else, end.
+|	|
+|	| (C) Encrypt password using AES algorithm.
+|	|
+|	| (C) Sign encrypted password
+|	|
+|======>| (C) Hey server, here is my encrypted password and signature.
+|	|
+|	| (S) Is the signature correct? If so, add password to database and reply valid. Else, reply invalid.
+|	|
+| <=====| (S) Valid/Invalid, close connection.
+
+Getting password:
+C	S
+|	|
+|======>| (C) Hi Server, I'd like to get my password.
+|	|
+| <=====| (S) Here is your encrypted password. Close connection.
+|	|
+|	| (C) Try to decrypt password using key.
