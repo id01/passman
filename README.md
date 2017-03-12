@@ -31,6 +31,8 @@ Don't write to disk, even though file is zeroed out using filenuke.c.
 Switch to a different, better-maintained cryptography library that is more standard and also supports Elliptic Curve.  
 
 ## Changelog
+* xx/xx/xxxx (id01)  
+ * Switched AES/SHA/MD5 library back to pyCrypto  
 * 03/27/2017 (id01)  
  * Initial Commit  
  * Registration Web UI  
@@ -48,4 +50,5 @@ Switch to a different, better-maintained cryptography library that is more stand
 
 ## Credits
 * PyElliptic library by yann2192
+* PyCrypto library
 * Python, WebExtensions, Javascript, PHP, HTML, C, Shell and every other programming language I used :)

@@ -1,12 +1,12 @@
+import base64;
+from base64 import b64encode as encode64;
+from base64 import b64decode as decode64;
 import pyelliptic;
 import hashlib;
 import socket;
-import os;
+import os, sys;
 import random;
-import getpass;
-import sys;
-import simpleraes;
-from simpleraes import *;
+import time;
 
 # Where to connect
 host = "192.168.1.3"
@@ -14,6 +14,9 @@ port = 3000
 
 username = raw_input("");
 masterkey = raw_input("");
+
+# Get hash of the master key. Used for decryption and encryption later on.
+keyhash = hashlib.sha256(masterkey).digest();
 
 # First, I need to get the cipher and curve
 def get_algs():
@@ -36,7 +39,7 @@ except IndexError:
 sys.stderr.write("AES Cipher: " + aescipher + "\n");
 sys.stderr.write("ECC Curve: " + ecccurve + "\n");
 if aescipher == "" or ecccurve == "":
-	sys.stderr.write("User doesn't exist\n");
+	sys.stderr.write("User doesn't exist");
 	print "INCORRECT USERNAME";
 	exit(1);
 
@@ -72,12 +75,13 @@ def get_eccpriv():
 	eccraw = remote.recv(4096);
 	remote.close();
 	if eccraw[:5] != "VALID":
-		sys.stderr.write("Username wasn't found in the database.\n");
+		sys.stderr.write("Username wasn't found in the database.\n")
 		exit(1);
 	# Decrypt the ECC private key
 	eccenc = decode64(eccraw.strip()[6:]);
-	eccpriv = decryptAES(eccenc, masterkey, aescipher);
-	sys.stderr.write("Successfully decrypted ECC key.\n")
+	aes = pyelliptic.Cipher(keyhash, eccenc[-16:], 0, ciphername=aescipher);
+	eccpriv = aes.ciphering(eccenc[:-16]);
+	sys.stderr.write("Successfully decrypted ECC key.\n");
 	return eccpriv;
 
 # Verify password using get_eccpriv()
@@ -136,7 +140,9 @@ def add_password(account):
 	sys.stderr.write("Response accepted. Generating new password...\n");
 	rawpassword = get_random_password(20);
 	# Encrypt password with AES
-	passwordcrypt = encryptAES(rawpassword, masterkey, aescipher);
+	iv = pyelliptic.Cipher.gen_IV(aescipher);
+	aes = pyelliptic.Cipher(keyhash, iv, 1, ciphername=aescipher);
+	passwordcrypt = aes.update(rawpassword) + aes.final() + iv;
 	# Sign password with ECC
 	passwordsign = pyelliptic.ECC(pubkey=eccpub, privkey=eccpriv, curve=ecccurve).sign(passwordcrypt);
 	# Send password and signature over, in base64
@@ -161,7 +167,9 @@ def get_password(account):
 	# Decrypt the password.
 	sys.stderr.write("Decrypting password...\n");
 	passcrypt = decode64(passraw.strip()[6:]);
-	mypass = decryptAES(passcrypt, masterkey, aescipher);
+	aes = pyelliptic.Cipher(keyhash, passcrypt[-16:], 0, ciphername=aescipher);
+	mypass = aes.ciphering(passcrypt[:-16]);
+	sys.stderr.write("Password copied to clipboard.\n");
 	print "GOT PASSWORD: " + mypass;
 	return 0;
 
@@ -171,8 +179,6 @@ def main():
 		get_password(command[4:]);
 	elif command[:4] == "ADD ":
 		add_password(command[4:]);
-	elif command[:4] == "QUIT" or command[:4] == "quit":
-		exit(0);
 	else:
 		sys.stderr.write("Command not found.\n");
 

@@ -27,5 +27,6 @@ a = open("/tmp/passman.passwd", "w")
 a.write(recievedMessage);
 a.close();
 x = os.popen("python passclient_webui.py </tmp/passman.passwd 2>/tmp/passman.log").read();
-os.unlink("/tmp/passman.passwd");
+#os.system("echo '" + recievedMessage + "' > /tmp/asdf");
+#os.unlink("/tmp/passman.passwd");
 sendMessage(encodeMessage(x));

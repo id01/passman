@@ -1,13 +1,13 @@
 # This script sets up a new user for the database
-import os;
 import sys;
-import getpass;
-from getpass import getpass;
-import base64;
 import _mysql;
-from base64 import b64encode as encode64;
 import pyelliptic;
 import hashlib;
+import Crypto;
+from Crypto.Cipher import AES;
+from Crypto import Random;
+import simpleraes;
+from simpleraes import *;
 
 # AES cipher, ECC curve
 ecccurve = sys.argv[1];
@@ -17,15 +17,12 @@ aescipher = sys.argv[2];
 username = raw_input("");
 userhash = hashlib.sha256(username).hexdigest();
 key = raw_input("");
-keyhash = hashlib.sha256(key).digest();
 # Generate ECC key (used for signing)
 eccall = pyelliptic.ECC(curve=ecccurve);
 eccprv = eccall.get_privkey();
 eccpub = eccall.get_pubkey();
 # Encrypt ECC private keys
-iv = pyelliptic.Cipher.gen_IV(aescipher);
-aes = pyelliptic.Cipher(keyhash, iv, 1, ciphername=aescipher)
-eccenc = aes.update(eccprv) + aes.final() + iv;
+eccenc = encryptAES(eccprv, key, aescipher);
 # Connect to database
 db = _mysql.connect('localhost', 'passman', "", 'passwords');
 # Add user to database

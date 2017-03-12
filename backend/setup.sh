@@ -1,6 +1,6 @@
 #!/bin/bash
 
-gcc -o filenuke filenuke.c
+gcc -std=c99 -o filenuke filenuke.c
 
 echo "
 create database passwords;
