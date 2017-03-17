@@ -4,7 +4,7 @@ Another note: This only works on Linux as of the moment. However, it shouldn't b
 This is a (somewhat) simple password manager that runs on mySQL.  
 
 ## Backend Installation
-Install mysql, gcc, pyelliptic.  
+Install mysql, gcc, pyelliptic, tcpserver.  
 Run ./setup.sh  
 Run ./service.sh to start the service.  
 Symlink a folder on your webserver to this folder for setting up of new users from the internet.  
@@ -22,18 +22,18 @@ Passwords stored on server encrypted with AES and generated at client side after
 Centralized password management without need for copying any files.  
 
 ## Other Notes
-ALWAYS run the registration web server over SSL. Otherwise, the world (and all your passwords) will be destroyed. But seriously. Don't run the webserver over plaintext. It's not good for your health.  
+ALWAYS run the registration web server over SSL. Otherwise, the world (and all your passwords) will be destroyed.  
+Just kidding! But seriously. Don't run the webserver over plaintext. It's not good for your health.  
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Todo
-Allow webUI to fetch passwords and decrypt them on the client side.  
-Don't write to disk, even though file is zeroed out using filenuke.c.  
-Switch to a different, better-maintained cryptography library that is more standard and also supports Elliptic Curve.  
+100% HTTP/HTTPS (ecdsa is having... problems)!!!  
 
 ## Changelog
-* xx/xx/xxxx (id01)  
- * Switched AES/SHA/MD5 library back to pyCrypto  
-* 03/27/2017 (id01)  
+* 03/16/2017 (id01)  
+ * Switched AES library back to pyCrypto  
+ * Added webui to get passwords and decrypt them on the client side using sjcl  
+* 03/07/2017 (id01)  
  * Initial Commit  
  * Registration Web UI  
  * Changed cryptography library twice to something that supports elliptic curve  
@@ -49,6 +49,10 @@ Switch to a different, better-maintained cryptography library that is more stand
  * Start of project.  
 
 ## Credits
-* PyElliptic library by yann2192
-* PyCrypto library
+* pyElliptic - BSD License
+* PyCrypto library - Public Domain (Must be installed on server side via pip or apt-get)
+* sjcl library (Stanford Javascript Cryptography Library) - BSD License/GNU GPL
+* jQuery (MIT license)
 * Python, WebExtensions, Javascript, PHP, HTML, C, Shell and every other programming language I used :)
+ Also, special thanks to my PC, router, ISP, Raspberry Pi, and web browser for making this possible :D Lol
+Note: Licenses for software used can be found in licenses/

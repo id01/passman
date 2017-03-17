@@ -12,3 +12,5 @@ create table algorithms (userhash CHAR(64), curve VARCHAR(16), aes VARCHAR(16));
 echo "Please input your mysql root password: "
 mysql -u root -p < /tmp/setup.tmp
 rm /tmp/setup.tmp
+
+echo "Done with basic setup."

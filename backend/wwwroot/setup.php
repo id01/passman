@@ -20,15 +20,7 @@ else
 	}
 	switch ($_POST["aes"])
 	{
-		// ECB ciphers
-		case 1: $aes = "aes-128-ctr"; break;
-		case 2: $aes = "aes-256-ctr"; break;
-		// CBC ciphers
-		case 3: $aes = "aes-128-cbc"; break;
-		case 4: $aes = "aes-256-cbc"; break;
-		// OCB ciphers
-		case 5: $aes = "aes-128-ofb"; break;
-		case 6: $aes = "aes-256-ofb"; break;
+		case 1: $aes = "aes-256-cbc"; break; // cbc cipher. Will probably add more in future.
 		default: $aes = "";
 	}
 	if ($curve == "" || $aes == "")
@@ -43,8 +35,9 @@ else
 		fwrite($inputfile, $_POST["username"] . "\n");
 		fwrite($inputfile, $_POST["key"] . "\n");
 		fclose($inputfile);
-		echo "Result: " . exec("python setup.py " . $curve . " " . $aes . " < /tmp/" . $usermd5 . " 2>&1");
-		exec("./filenuke /tmp/" . $usermd5);
+		chdir(realpath("."));
+		echo "Result: " . exec("python ../setup.py " . $curve . " " . $aes . " < /tmp/" . $usermd5 . " 2>&1");
+		exec("../filenuke /tmp/" . $usermd5);
 	}
 }
 ?>

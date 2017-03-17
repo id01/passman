@@ -1,0 +1,25 @@
+<html>
+<body>
+<script src="bootstrap/sjcl.js"></script>
+<script src="bootstrap/jquery.js"></script>
+<script src="javascript/getpass.min.js"></script>
+<form id="getform" method="post" action="javascript:submitform();">
+<div id="notification">Please Login.</div>
+Username: <input type="text" name="userin"><br/>
+Password: <input type="password" id="password_input"><br/>
+Account Name: <input type="text" name="account"><br/>
+<input type="submit" value="Get Password">
+</form>
+<div id="resultdiv">
+Account Password: <input id="decrypted" type="password" disabled="true">
+<button id="copybutton" type="button">Copy</button>
+</div>
+<script>
+document.getElementById("getform").addEventListener("submit", submitAction);
+document.getElementById("copybutton").addEventListener("click", copyAction);
+if (document.location.search == "?extension") {
+	document.getElementById("resultdiv").style = "display:none";
+}
+</script>
+</body>
+</html>
