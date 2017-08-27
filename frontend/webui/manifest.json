@@ -1,7 +1,0 @@
-{
-	"name": "passman",
-	"description": "Password manager webUI",
-	"path": "/home/nowhere/run.sh",
-	"type": "stdio",
-	"allowed_extensions": [ "passman@127.0.0.1" ]
-}

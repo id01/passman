@@ -15,11 +15,6 @@ fwrite($pfile, "GET\n");
 fwrite($pfile, $_POST["account"] . "\n");
 fwrite($pfile, $_POST["userin"] . "\n");
 pclose($pfile);
-//echo file_get_contents($mytokenfile + "\n");
-$pfile = popen("python ../passwords.py >> " . $mytokenfile, "w");
-fwrite($pfile, "GETALG\n");
-fwrite($pfile, $_POST["userin"] . "\n");
-pclose($pfile);
 echo file_get_contents($mytokenfile);
 unlink($mytokenfile);
 ?>

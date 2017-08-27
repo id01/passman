@@ -21,8 +21,12 @@ createframe.append(createinput);
 createframe.innerHTML += "<br/>";
 createinput = document.createElement("select");
 createinput.name = "passmangetadd";
-createinput.innerHTML = "<option value='GET'>Get a password</select>";
-createinput.innerHTML += "<option value='ADD'>Add a password</select>";
+createinput.innerHTML = "<option value='GET'>Get password</select>";
+createinput.innerHTML += "<option value='ADD 8'>Add password (8)</select>";
+createinput.innerHTML += "<option value='ADD 15'>Add password (15)</select>";
+createinput.innerHTML += "<option value='ADD 24'>Add password (24)</select>";
+createinput.innerHTML += "<option value='ADD 31'>Add password (31)</select>";
+createinput.innerHTML += "<option value='ADD 63'>Add password (63)</select>";
 createframe.append(createinput);
 createframe.innerHTML += "<br/>";
 createinput = document.createElement("button");
@@ -86,17 +90,12 @@ document.addEventListener('click', function (e) {
 });
 
 chrome.runtime.onMessage.addListener(request => {
-	if (request.password == "ERR") {
+	if (request.password.charCodeAt(0) == 2) {
 		document.getElementById("passmanframe").querySelector("[name=err]").style.color = "red";
-		document.getElementById("passmanframe").querySelector("[name=err]").innerHTML = "Something went wrong";
-	}
-	else if (request.password == "WRONG") {
-		document.getElementById("passmanframe").querySelector("[name=err]").style.color = "red";
-		document.getElementById("passmanframe").querySelector("[name=err]").innerHTML = "Incorrect login";
-	}
-	else {
+		document.getElementById("passmanframe").querySelector("[name=err]").innerHTML = request.errMessage;
+	} else {
 		document.getElementById("passmanframe").querySelector("[name=err]").style.color = "green";
-		document.getElementById("passmanframe").querySelector("[name=err]").innerHTML = "Done";
+		document.getElementById("passmanframe").querySelector("[name=err]").innerHTML = request.errMessage;
 		currentSelectPassword.value = request.password;
 	}
 });

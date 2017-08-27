@@ -7,12 +7,14 @@ This is a (somewhat) simple password manager that runs on mySQL.
 Install mysql, gcc, pyelliptic, tcpserver.  
 Run ./setup.sh  
 Run ./service.sh to start the service.  
-Symlink a folder on your webserver to this folder for setting up of new users from the internet.  
+Symlink a folder on your webserver to backend/wwwroot for setting up of new users from the internet.  
 
 ## Frontend Installation
 Install web extension on browser. It won't work yet.  
-Run ./install.sh in the frontend/webui folder. MAKE SURE TO RUN IT IN THE RIGHT FOLDER!!!  
-Change "host" and "port" parameters in frontend/webui/passclient_webui.py file to appropriate values so you can connect to the right server.  
+Add 'python frontend/webextension/webextension_server/httpserver.py' to startup.  
+Change "host" and "port" parameters in frontend/webextension/webextension_server/communicator.py 
+to appropriate values so you can connect to the right server.  
+Log out then log in.  
 
 ## Features
 Variable symmetric and elliptic curve algorithms. (Including AES-256 and sect571k1)  
@@ -27,9 +29,21 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Todo
-100% HTTP/HTTPS (ecdsa is having... problems)!!!  
+100% HTTP/HTTPS (giving up due to lack of a good standard Javascript implementation of ecdsa)  
+NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 08/27/2017 (id01)  
+ * Biggest update EVER  
+ * Rewrote the entire backend, changing ECC/AES libraries to python cryptography  
+ * Rewrote most of the entire webextension  
+ * Rewrote a lot more things  
+ * Added ability to choose length of password added  
+ * Removed ability to choose encryption type  
+ * Changed default encryption type to AES-256-GCM inside AES-256-CBC  
+ * For some reason, AES is now being base64'ed 2 times instead of 1  
+ * Wrote a script for myself to migrate from the previous version (not availiable on github)  
+ * Changed signing portion of protocol to avoid replay attacks  
 * 03/16/2017 (id01)  
  * Switched AES library back to pyCrypto  
  * Added webui to get passwords and decrypt them on the client side using sjcl  
@@ -49,10 +63,15 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
  * Start of project.  
 
 ## Credits
-* pyElliptic - BSD License
-* PyCrypto library - Public Domain (Must be installed on server side via pip or apt-get)
-* sjcl library (Stanford Javascript Cryptography Library) - BSD License/GNU GPL
-* jQuery (MIT license)
+* sjcl library (Stanford Javascript Cryptography Library) - BSD License/GNU GPL  
+* jQuery (MIT license)  
 * Python, WebExtensions, Javascript, PHP, HTML, C, Shell and every other programming language I used :)
  Also, special thanks to my PC, router, ISP, Raspberry Pi, and web browser for making this possible :D Lol
 Note: Licenses for software used can be found in licenses/
+
+## Dependencies
+* Python 2.x  
+* Python cryptography library  
+* Mysql (server only)  
+* secure-delete (server only)  
+* An http server (server only)  

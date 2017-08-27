@@ -16,12 +16,7 @@
 		"scripts": ["handler.js"]
 	},
 
-	"applications": {
-		"gecko": {
-			"id": "passman@127.0.0.1",
-			"strict_min_version": "1.0"
-		}
-	},
-
-	"permissions": ["nativeMessaging"]
+	"permissions": [
+		"http://localhost:13880/"
+	]
 }

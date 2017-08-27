@@ -6,45 +6,49 @@ function submitAction(event) {
 	var getForm = document.getElementById("getform");
 	jQuery.post("getpass.php", "userin=" + getForm.querySelector("[name=userin]").value + "&account=" + getForm.querySelector("[name=account]").value, updateEncrypted, "text");
 }
+function simpleAESDecrypt(rawciphertext, key) {
+	// This is unconventional... Codec aliases
+	var cb64 = sjcl.codec.base64;
+	var chex = sjcl.codec.hex;
+	var cstr = sjcl.codec.utf8String;
+	// Decode base64 to hex
+	var ciphertext2 = chex.fromBits(cb64.toBits(rawciphertext));
+	// Generate keys, get salt
+	var salt = ciphertext2.substring(ciphertext2.length-16);
+	ciphertext2 = ciphertext2.substring(0, ciphertext2.length-16);
+	var shakey1hex = chex.fromBits(sjcl.hash.sha256.hash(cstr.toBits(key)));
+	var shakey2 = sjcl.hash.sha256.hash(chex.toBits(shakey1hex+salt));
+	var shakey1 = chex.toBits(shakey1hex);
+	// First decryption (AES-256-CBC)
+	var iv = ciphertext2.substring(0, 32);
+	ciphertext2 = ciphertext2.substring(32);
+	var ciphertext1 = chex.fromBits(sjcl.mode.cbc.decrypt(new sjcl.cipher.aes(shakey2), chex.toBits(ciphertext2), chex.toBits(iv)));
+	// Second decryption (AES-256-GCM)
+	iv = ciphertext1.substring(0, 32);
+	ciphertext1 = ciphertext1.substring(32);
+	var plaintextpad = cstr.fromBits(sjcl.mode.gcm.decrypt(new sjcl.cipher.aes(shakey1), chex.toBits(ciphertext1), chex.toBits(iv)));
+	// Unpad plaintext and return
+	return plaintextpad.substring(0, plaintextpad.length-plaintextpad.charCodeAt(plaintextpad.length-1));
+}
 function updateEncrypted(data) {
 	var pass = document.getElementById("password_input").value;
 	var notification = document.getElementById("notification");
-	var keyHash = sjcl.hash.sha256.hash(pass);
-	var datasplit = data.split("\n");
-	var encdata = datasplit[0];
-	var eccdata = datasplit[1];
-	var aesdata = datasplit[2];
+	var encdata = data.split('\n')[0];
 	sjcl.beware["CBC mode is dangerous because it doesn't protect message integrity."]();
 	if (encdata.substring(0, 6) == "VALID ")
 	{
-	        var encPasswordHex = sjcl.codec.hex.fromBits(sjcl.codec.base64.toBits(encdata.substring(6)));
-	        var encPassword = sjcl.codec.hex.toBits(encPasswordHex.substring(0, encPasswordHex.length-32-64));
-	        var encPasswordHash = encPasswordHex.substring(encPasswordHex.length-64);
-	        var encPasswordIv = sjcl.codec.hex.toBits(encPasswordHex.substring(encPasswordHex.length-32-64, encPasswordHex.length-64));
-	        var aesParams = aesdata.split('-');
-	        var aesBits = aesParams[1];
-	        var aesMode = aesParams[2];
-		if (aesMode == "cbc")
-		{
-			var decPassword;
-			try {
-	                	decPassword = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(new sjcl.cipher.aes(keyHash), encPassword, encPasswordIv));
-			}
-			catch (err) {
-				decPassword = "";
-			}
-	                if (encPasswordHash == sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(decPassword)))
-	                {
-				notification.style.color = "green";
-				notification.innerHTML = "Done.";
-	                        document.getElementById("decrypted").value = decPassword;
-	                }
-			else
-			{
-				notification.style.color = "red";
-				notification.innerHTML = "Incorrect password.";
-			}
-	        }
+		var encPassword = sjcl.codec.utf8String.fromBits(sjcl.codec.base64.toBits(encdata.substring(6)));
+		var decPassword;
+		try {
+			decPassword = simpleAESDecrypt(encPassword, pass);
+			notification.style.color = "green";
+			notification.innerHTML = "Done.";
+			document.getElementById("decrypted").value = decPassword;
+		}
+		catch (err) {
+			notification.style.color = "red";
+			notification.innerHTML = "Incorrect password.";
+		}
 	}
 	else
 	{

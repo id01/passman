@@ -1,36 +1,41 @@
 # This script sets up a new user for the database
 import sys;
 import _mysql;
-import pyelliptic;
+import MySQLdb;
 import hashlib;
-import Crypto;
-from Crypto.Cipher import AES;
-from Crypto import Random;
-import simpleraes;
-from simpleraes import *;
+import cryptography;
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes;
+from cryptography.hazmat.backends import default_backend;
+from cryptography.hazmat.primitives import hashes;
+from cryptography.hazmat.primitives.asymmetric import ec;
+from cryptography.hazmat.primitives import serialization;
+import os;
+import base64;
+backend = default_backend();
 
-# AES cipher, ECC curve
-ecccurve = sys.argv[1];
-aescipher = sys.argv[2];
+import simpleraes2;
+from simpleraes2 import *;
 
 # Get master symmetric key
 username = raw_input("");
 userhash = hashlib.sha256(username).hexdigest();
 key = raw_input("");
 # Generate ECC key (used for signing)
-eccall = pyelliptic.ECC(curve=ecccurve);
-eccprv = eccall.get_privkey();
-eccpub = eccall.get_pubkey();
-# Encrypt ECC private keys
-eccenc = encryptAES(eccprv, key, aescipher);
+eccprv = ec.generate_private_key(ec.SECT571K1(), default_backend());
+eccpub = eccprv.public_key();
+# Export ECC keys
+eccprvs = eccprv.private_bytes(encoding=serialization.Encoding.PEM, format=serialization.PrivateFormat.PKCS8, encryption_algorithm=serialization.NoEncryption());
+eccpubs = eccpub.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo);
+eccencs = encryptAES(eccprvs, key);
 # Connect to database
-db = _mysql.connect('localhost', 'passman', "", 'passwords');
+db = MySQLdb.connect(user='passman', db='passwords');
+dbc = db.cursor();
 # Add user to database
 try:
-	db.query("create table " + userhash + " (account CHAR(32), encrypted VARCHAR(4096))");
+	dbc.execute("create table " + userhash + " (account CHAR(32), encrypted VARCHAR(4096))");
+	dbc.execute("insert into cryptokeys (userhash, public, private) values ('" + userhash + "', '" + base64.b64encode(eccpubs) + "', '" + eccencs + "')");
+	db.commit();
 except _mysql.OperationalError:
 	print "User already exists!";
 	exit(1);
-db.query("insert into cryptokeys (userhash, public, private) values ('" + userhash + "', '" + encode64(eccpub) + "', '" + encode64(eccenc) + "')");
-db.query("insert into algorithms (userhash, curve, aes) values ('" + userhash + "', '" + ecccurve + "', '" + aescipher + "')");
 print "Success!"

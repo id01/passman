@@ -1,44 +1,28 @@
-import pyelliptic;
 import hashlib;
 import socket;
 import os;
 import random;
 import getpass;
 import sys;
-import simpleraes;
-from simpleraes import *;
+import simpleraes2;
+from simpleraes2 import *;
+import cryptography;
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes;
+from cryptography.hazmat.backends import default_backend;
+from cryptography.hazmat.primitives import hashes;
+from cryptography.hazmat.primitives.asymmetric import ec;
+from cryptography.hazmat.primitives import serialization;
+import base64;
+from base64 import b64encode as encode64;
+from base64 import b64decode as decode64;
+backend = default_backend();
 
 # Where to connect
 host = "192.168.1.3"
 port = 3000
 
-username = raw_input("");
-masterkey = raw_input("");
-
-# First, I need to get the cipher and curve
-def get_algs():
-	remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM);
-	remote.connect((host, port));
-	remote.sendall("GETALG\n" + username + "\n");
-	data = remote.recv(256) + remote.recv(256);
-	remote.close();
-	return data.split('\n');
-
-sys.stderr.write("Getting cipher and curve from the server...\n");
-get_algs_result = get_algs();
-try:
-	aescipher = get_algs_result[1];
-	ecccurve = get_algs_result[0];
-except IndexError:
-	sys.stderr.write("User doesn't exist\n");
-	print "INCORRECT USERNAME";
-	exit(1);
-sys.stderr.write("AES Cipher: " + aescipher + "\n");
-sys.stderr.write("ECC Curve: " + ecccurve + "\n");
-if aescipher == "" or ecccurve == "":
-	sys.stderr.write("User doesn't exist\n");
-	print "INCORRECT USERNAME";
-	exit(1);
+username = raw_input("Username: ");
+masterkey = getpass.getpass("Master Key: ");
 
 # Function to get a password (base64)
 def get_random_password(length):
@@ -75,8 +59,9 @@ def get_eccpriv():
 		sys.stderr.write("Username wasn't found in the database.\n");
 		exit(1);
 	# Decrypt the ECC private key
-	eccenc = decode64(eccraw.strip()[6:]);
-	eccpriv = decryptAES(eccenc, masterkey, aescipher);
+	eccenc = eccraw.strip()[6:];
+	eccprivs = decryptAES(eccenc, masterkey);
+	eccpriv = serialization.load_pem_private_key(eccprivs, password=None, backend=default_backend());
 	sys.stderr.write("Successfully decrypted ECC key.\n")
 	return eccpriv;
 
@@ -84,7 +69,7 @@ def get_eccpriv():
 try:
 	get_eccpriv();
 except Exception:
-	print "INCORRECT PASSWORD"
+	sys.stderr.write("Password incorrect.\n");
 	exit(1);
 
 # Function to get ECC (asymmetric) public key
@@ -98,24 +83,9 @@ def get_eccpub():
 	if eccraw[:5] != "VALID":
 		sys.stderr.write("Username wasn't found in the database.\n")
 		exit(1);
-	eccpub = decode64(eccraw.strip()[6:]);
+	eccpubs = decode64(eccraw.strip()[6:]);
+	eccpub = serialization.load_pem_public_key(eccpubs, backend=default_backend());
 	return eccpub;
-
-# Function to handshake with server
-def handshake(remote, eccpriv, eccpub):
-	# Get challenge and sign it
-	challenge = get_sockline(remote);
-	if challenge[:9] != "CHALLENGE":
-		sys.stderr.write(challenge + "\n"); # Some error happened.
-		return 1;
-	challengeresponse = encode64(pyelliptic.ECC(pubkey=eccpub, privkey=eccpriv, curve=ecccurve).sign(challenge.strip()[10:]));
-	remote.send(challengeresponse + "\n");
-	# Get result, see if response was accepted
-	result = get_sockline(remote);
-	if result[:5] != "VALID":
-		sys.stderr.write(result + "\n"); # Some error happened
-		return 1;
-	return 0;
 
 # Function to add something to database
 def add_password(account):
@@ -128,22 +98,23 @@ def add_password(account):
 	remote.connect((host, port));
 	remote.send("ADD\n" + account + "\n" + username + "\n");
 	# Perform handshake
-	sys.stderr.write("Responding to challenge...\n");
-	handshakeresult = handshake(remote, eccpriv, eccpub);
-	if handshakeresult == 1:
-		return 1; # Some error happened
+	sys.stderr.write("Inserting new password...\n");
+	challenge = get_sockline(remote);
+	if challenge[:9] != "CHALLENGE":
+		sys.stderr.write(challenge + "\n"); # Some error happened.
+		return 1;
+	challenge = decode64(challenge[10:]); # It's in base64
 	# Generate password
-	sys.stderr.write("Response accepted. Generating new password...\n");
 	rawpassword = get_random_password(20);
 	# Encrypt password with AES
-	passwordcrypt = encryptAES(rawpassword, masterkey, aescipher);
+	passwordcrypt = encryptAES(rawpassword, masterkey);
 	# Sign password with ECC
-	passwordsign = pyelliptic.ECC(pubkey=eccpub, privkey=eccpriv, curve=ecccurve).sign(passwordcrypt);
+	passwordsign = signECDSA(eccpriv, challenge+passwordcrypt);
 	# Send password and signature over, in base64
 	remote.send(encode64(passwordcrypt) + "\n" + encode64(passwordsign) + "\n");
 	finalresult = get_sockline(remote);
 	remote.close();
-	print "ADDED PASSWORD: " + finalresult;
+	sys.stderr.write(finalresult + "\n");
 	return 0;
 
 # Function to get a password from database
@@ -161,12 +132,12 @@ def get_password(account):
 	# Decrypt the password.
 	sys.stderr.write("Decrypting password...\n");
 	passcrypt = decode64(passraw.strip()[6:]);
-	mypass = decryptAES(passcrypt, masterkey, aescipher);
-	print "GOT PASSWORD: " + mypass;
+	mypass = decryptAES(passcrypt, masterkey);
+	print "Password: " + mypass;
 	return 0;
 
 def main():
-	command = raw_input("");
+	command = raw_input("passman > ");
 	if command[:4] == "GET ":
 		get_password(command[4:]);
 	elif command[:4] == "ADD ":
@@ -176,5 +147,5 @@ def main():
 	else:
 		sys.stderr.write("Command not found.\n");
 
-# Only one iteration
-main();
+while True:
+	main();

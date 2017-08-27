@@ -4,21 +4,27 @@ from base64 import b64encode as encode64;
 from base64 import b64decode as decode64;
 import random;
 import _mysql;
-import _mysql_exceptions;
-import pyelliptic;
+import MySQLdb;
+import cryptography;
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes;
+from cryptography.hazmat.backends import default_backend;
+from cryptography.hazmat.primitives import hashes;
+from cryptography.hazmat.primitives.asymmetric import ec;
+from cryptography.hazmat.primitives import serialization;
 import hashlib;
+backend = default_backend();
+
+import simpleraes2;
+from simpleraes2 import *;
 
 # Connect to mysql server
 try:
-	db = _mysql.connect("localhost", "passman", "", "passwords");
+	db = MySQLdb.connect(user='passman', db='passwords');
+	dbc = db.cursor();
 # If database does not yet exist
 except _mysql_exceptions.OperationalError:
 	print "Something went wrong with contacting the database... Did you run setup.sh?"
 	exit(1);
-
-# Function to create a challenge.
-def create_password():
-	return encode64(os.urandom(20)).rstrip('=')[20:];
 
 # Functions to add and get passwords
 def add_password(account, username):
@@ -29,74 +35,58 @@ def add_password(account, username):
 	accounthash = hashlib.md5(account).hexdigest();
 	userhash = hashlib.sha256(username).hexdigest();
 	# Get user ECC key
-	db.query("SELECT public FROM cryptokeys WHERE userhash='" + userhash + "'")
+	dbc.execute("SELECT public FROM cryptokeys WHERE userhash='" + userhash + "'")
 	try:
-		pubraw = db.use_result().fetch_row(0)[0][0];
-	except IndexError:
+		pubraw = dbc.fetchone()[0];
+	except (IndexError, TypeError):
 		return 1; # User doesn't exist
-	# Get ecc curve for username
-	ecccurve = get_algorithms(username).split('\n')[0];
 	# Decode elliptic public key
-	eccpub = decode64(pubraw);
+	eccpubs = decode64(pubraw);
+	eccpub = serialization.load_pem_public_key(eccpubs, backend=backend);
 	# Create a challenge. Get signature.
-	challenge = create_password();
-	print "CHALLENGE " + challenge;
-	challengeinput = decode64(raw_input(""));
-	if pyelliptic.ECC(pubkey=eccpub, curve=ecccurve).verify(challengeinput, challenge) == False:
-		return 2; # Wrong challenge
-	# Get user to insert encrypted password into database, with signature
-	print "VALID";
+	challenge = os.urandom(20);
+	print "CHALLENGE " + encode64(challenge);
+	# Get user to insert encrypted password into database, with signature of password and challenge
 	passwordcrypt = decode64(raw_input(""));
 	passwordsign = decode64(raw_input(""));
-	if pyelliptic.ECC(pubkey=eccpub, curve=ecccurve).verify(passwordsign, passwordcrypt) == False:
+	if verifyECDSA(eccpub, passwordsign, challenge+passwordcrypt) == False:
 		return 3; # Wrong signature
 	# Insert into database
-	db.query("INSERT into " + userhash + " (account, encrypted) VALUES ('" + accounthash + "', '" + encode64(passwordcrypt) + "')");
+	dbc.execute("INSERT into " + userhash + " (account, encrypted) VALUES ('" + accounthash + "', '" + encode64(passwordcrypt) + "')");
+	db.commit();
 	return 0;
 
 def get_password(account, username):
 	# Get user hash
 	userhash = hashlib.sha256(username).hexdigest();
         # Get user ECC key
-        db.query("SELECT public FROM cryptokeys WHERE userhash='" + userhash + "'")
+        dbc.execute("SELECT public FROM cryptokeys WHERE userhash='" + userhash + "'")
         try:
-                pubraw = db.use_result().fetch_row(0)[0][0];
-        except IndexError:
+                pubraw = dbc.fetchone()[0];
+        except (IndexError, TypeError):
                 return ""; # User doesn't exist
         # Decode elliptic public key
         eccpub = decode64(pubraw);
-	db.query("SELECT encrypted FROM " + userhash + " WHERE account='" + hashlib.md5(account).hexdigest() + "';");
-	r = db.use_result();
+	dbc.execute("SELECT encrypted FROM " + userhash + " WHERE account='" + hashlib.md5(account).hexdigest() + "';");
 	try:
-		f = r.fetch_row(0)[0][0];
-	except IndexError:
-		return "de" # Entry doesn't exist
+		f = dbc.fetchone()[0];
+	except (IndexError, TypeError):
+		return "de"; # Entry doesn't exist
 	return f;
 
 def get_ecckey(username):
 	# Get encrypted ECC private key
-	db.query("select private from cryptokeys where userhash='" + hashlib.sha256(username).hexdigest() + "'");
+	dbc.execute("select private from cryptokeys where userhash='" + hashlib.sha256(username).hexdigest() + "'");
 	try:
-		return db.use_result().fetch_row(0)[0][0];
+		return dbc.fetchone()[0];
 	except IndexError:
 		return "";
 
 def get_pubkey(username):
 	# Get plaintext ECC public key
-	db.query("select public from cryptokeys where userhash='" + hashlib.sha256(username).hexdigest() + "'");
+	dbc.execute("select public from cryptokeys where userhash='" + hashlib.sha256(username).hexdigest() + "'");
 	try:
-		return db.use_result().fetch_row(0)[0][0];
-	except IndexError:
-		return "";
-
-def get_algorithms(username):
-	# Get algorithms, seperated by newline.
-	db.query("select curve from algorithms where userhash='" + hashlib.sha256(username).hexdigest() + "'");
-	try:
-		a = db.use_result().fetch_row(0)[0][0];
-		db.query("select aes from algorithms where userhash='" + hashlib.sha256(username).hexdigest() + "'");
-		b = db.use_result().fetch_row(0)[0][0];
-		return a + "\n" + b;
+		return dbc.fetchone()[0];
 	except IndexError:
 		return "";
 
@@ -143,9 +133,6 @@ def main():
 			print "Entry doesn't exist";
 		else:
 			print "VALID " + eccpub;
-	elif command == 'GETALG':
-		username = raw_input("").strip();
-		print get_algorithms(username);
 	else:
 		print "Syntax Error";
 
