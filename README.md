@@ -36,7 +36,7 @@ NOTE: You can still bypass firewalls if you host the service on port 80 :)
 * 08/27/2017 (id01)  
  * Biggest update EVER  
  * Rewrote the entire backend, changing ECC/AES libraries to python cryptography  
- * Rewrote most of the entire webextension  
+ * Rewrote most of the entire webextension so no native messaging, and more portable too  
  * Rewrote a lot more things  
  * Added ability to choose length of password added  
  * Removed ability to choose encryption type  
