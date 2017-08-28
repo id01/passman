@@ -5,17 +5,18 @@ A third note: I really need to make a good UI for the webextension... Help would
 
 ## Description
 This is a (no longer so) simple password manager that runs on mySQL.  
-Its primary feature is that the server knows a minimal amount of data about the user.  
+Its primary feature is that the server knows a minimal amount of data about the user (IP is logged, though).  
 Account names and usernames are hashed, and passwords are encrypted.  
 Passwords can be gotten through an HTTP service.  
 
-## Backend Installation
+## Installation
+#### Backend Installation
 Install mysql, gcc, pyelliptic, tcpserver.  
 Run ./setup.sh  
 Run ./service.sh to start the service.  
 Symlink a folder on your webserver to backend/wwwroot for setting up of new users from the internet.  
 
-## Frontend Installation
+#### Frontend Installation
 Install web extension on browser. It won't work yet.  
 Add 'python frontend/webextension_server/httpserver.py' to startup.  
 Change "host" and "port" parameters in frontend/webextension_server/communicator.py 
@@ -87,3 +88,4 @@ Note: Licenses for software used can be found in licenses/
 * Mysql (server only)  
 * secure-delete (server only)  
 * An http server (server only)  
+* tcpserver (server only)
