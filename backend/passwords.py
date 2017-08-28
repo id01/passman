@@ -26,6 +26,15 @@ except _mysql_exceptions.OperationalError:
 	print "Something went wrong with contacting the database... Did you run setup.sh?"
 	exit(1);
 
+# Check if string is base64
+def isBase64(s):
+	try:
+		if base64.b64encode(base64.b64decode(s)) == s:
+			return True;
+	except Exception:
+		pass;
+	return False;
+
 # Functions to add and get passwords
 def add_password(account, username):
 	# Make sure the account doesn't exist
@@ -42,17 +51,17 @@ def add_password(account, username):
 		return 1; # User doesn't exist
 	# Decode elliptic public key
 	eccpubs = decode64(pubraw);
-	eccpub = serialization.load_pem_public_key(eccpubs, backend=backend);
+	eccpub = serialization.load_der_public_key(eccpubs, backend=backend);
 	# Create a challenge. Get signature.
 	challenge = os.urandom(20);
 	print "CHALLENGE " + encode64(challenge);
 	# Get user to insert encrypted password into database, with signature of password and challenge
-	passwordcrypt = decode64(raw_input(""));
+	passwordcrypt = raw_input("");
 	passwordsign = decode64(raw_input(""));
-	if verifyECDSA(eccpub, passwordsign, challenge+passwordcrypt) == False:
-		return 3; # Wrong signature
+	if not (verifyECDSA(eccpub, passwordsign, challenge+passwordcrypt) and isBase64(passwordcrypt)):
+		return 3; # Wrong signature or invalid password
 	# Insert into database
-	dbc.execute("INSERT into " + userhash + " (account, encrypted) VALUES ('" + accounthash + "', '" + encode64(passwordcrypt) + "')");
+	dbc.execute("INSERT into " + userhash + " (account, encrypted) VALUES ('" + accounthash + "', '" + passwordcrypt + "')");
 	db.commit();
 	return 0;
 

@@ -24,8 +24,8 @@ key = raw_input("");
 eccprv = ec.generate_private_key(ec.SECT571K1(), default_backend());
 eccpub = eccprv.public_key();
 # Export ECC keys
-eccprvs = eccprv.private_bytes(encoding=serialization.Encoding.PEM, format=serialization.PrivateFormat.PKCS8, encryption_algorithm=serialization.NoEncryption());
-eccpubs = eccpub.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo);
+eccprvs = eccprv.private_bytes(encoding=serialization.Encoding.DER, format=serialization.PrivateFormat.PKCS8, encryption_algorithm=serialization.NoEncryption());
+eccpubs = eccpub.public_bytes(encoding=serialization.Encoding.DER, format=serialization.PublicFormat.SubjectPublicKeyInfo);
 eccencs = encryptAES(eccprvs, key);
 # Connect to database
 db = MySQLdb.connect(user='passman', db='passwords');

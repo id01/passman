@@ -11,8 +11,8 @@ Symlink a folder on your webserver to backend/wwwroot for setting up of new user
 
 ## Frontend Installation
 Install web extension on browser. It won't work yet.  
-Add 'python frontend/webextension/webextension_server/httpserver.py' to startup.  
-Change "host" and "port" parameters in frontend/webextension/webextension_server/communicator.py 
+Add 'python frontend/webextension_server/httpserver.py' to startup.  
+Change "host" and "port" parameters in frontend/webextension_server/communicator.py 
 to appropriate values so you can connect to the right server.  
 Log out then log in.  
 
@@ -33,6 +33,11 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 08/28/2017 (id01)  
+ * Made cli run off communicator, so I only need to change one file instead of two  
+ * No more double-base64ing for AES encrypted stuff!  
+ * Switched from PEM+base64 to DER+base64!  
+ * Made another migrate script, not going to upload it because nobody needs it anyway...  
 * 08/27/2017 (id01)  
  * Biggest update EVER  
  * Rewrote the entire backend, changing ECC/AES libraries to python cryptography  

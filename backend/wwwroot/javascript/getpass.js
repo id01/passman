@@ -31,13 +31,16 @@ function simpleAESDecrypt(rawciphertext, key) {
 	return plaintextpad.substring(0, plaintextpad.length-plaintextpad.charCodeAt(plaintextpad.length-1));
 }
 function updateEncrypted(data) {
+	// Get data for vars and activate CBC
 	var pass = document.getElementById("password_input").value;
 	var notification = document.getElementById("notification");
 	var encdata = data.split('\n')[0];
 	sjcl.beware["CBC mode is dangerous because it doesn't protect message integrity."]();
+	// Check output
 	if (encdata.substring(0, 6) == "VALID ")
 	{
-		var encPassword = sjcl.codec.utf8String.fromBits(sjcl.codec.base64.toBits(encdata.substring(6)));
+		// Try decryption. If it fails, there is an incorrect password.
+		var encPassword = encdata.substring(6);
 		var decPassword;
 		try {
 			decPassword = simpleAESDecrypt(encPassword, pass);
@@ -53,7 +56,7 @@ function updateEncrypted(data) {
 	else
 	{
 		notification.style.color = "red";
-		notification.innerHTML = "Entry doesn't exist.";
+		notification.innerHTML = "Error getting entry: "+encdata;
 	}
 }
 function copyAction() {

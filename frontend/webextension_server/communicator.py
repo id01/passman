@@ -19,6 +19,7 @@ backend = default_backend();
 
 # Where to connect
 host = "192.168.1.3"
+#host = "localhost"
 port = 3000
 
 def communicate(username, masterkey, command):
@@ -59,7 +60,7 @@ def communicate(username, masterkey, command):
 		# Decrypt the ECC private key
 		eccenc = eccraw.strip()[6:];
 		eccprivs = decryptAES(eccenc, masterkey);
-		eccpriv = serialization.load_pem_private_key(eccprivs, password=None, backend=default_backend());
+		eccpriv = serialization.load_der_private_key(eccprivs, password=None, backend=default_backend());
 		sys.stderr.write("Successfully decrypted ECC key.\n")
 		return eccpriv;
 
@@ -82,7 +83,7 @@ def communicate(username, masterkey, command):
 			sys.stderr.write("Username wasn't found in the database.\n")
 			raise Exception("Username wasn't found in the database");
 		eccpubs = decode64(eccraw.strip()[6:]);
-		eccpub = serialization.load_pem_public_key(eccpubs, backend=default_backend());
+		eccpub = serialization.load_der_public_key(eccpubs, backend=default_backend());
 		return eccpub;
 
 	# Function to add something to database
@@ -117,7 +118,7 @@ def communicate(username, masterkey, command):
 		# Sign password with ECC
 		passwordsign = signECDSA(eccpriv, challenge+passwordcrypt);
 		# Send password and signature over, in base64
-		remote.send(encode64(passwordcrypt) + "\n" + encode64(passwordsign) + "\n");
+		remote.send(passwordcrypt + "\n" + encode64(passwordsign) + "\n");
 		finalresult = get_sockline(remote);
 		remote.close();
 		sys.stderr.write(finalresult + "\n");
@@ -137,7 +138,7 @@ def communicate(username, masterkey, command):
 			return "Error: " + passraw;
 		# Decrypt the password.
 		sys.stderr.write("Decrypting password...\n");
-		passcrypt = decode64(passraw.strip()[6:]);
+		passcrypt = passraw.strip()[6:];
 		mypass = decryptAES(passcrypt, masterkey);
 		return "Password: " + mypass;
 
@@ -156,9 +157,9 @@ def communicate(username, masterkey, command):
 	# Return in a specific form
 	if outMsg.strip() == "Error: Password already exists!":
 		return "Password Already Exists!\x04"+outPass;
-	elif outPass.find("Error") == 0:
-		return "ErrPss\x04"+outPass;
 	elif outMsg.find("Error") == 0:
 		return "ErrMsg\x04"+outMsg;
+	elif outPass.find("Error") == 0:
+		return "ErrPss\x04"+outPass;
 	else:
 		return outMsg+"\x04"+outPass;
