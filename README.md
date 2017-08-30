@@ -10,13 +10,16 @@ Account names and usernames are hashed, and passwords are encrypted.
 Passwords can be gotten through an HTTP service.  
 
 ## Installation
-#### Backend Installation
-Install mysql, gcc, pyelliptic, tcpserver.  
+### Backend Installation
+Install dependencies.  
 Run ./setup.sh  
 Run ./service.sh to start the service.  
 Symlink a folder on your webserver to backend/wwwroot for setting up of new users from the internet.  
+#### Optional
+To remove Google CDN, download jQuery (production version) and move it to backend/wwwroot/bootstrap/jquery.js, then remove 
+and uncomment the lines marked in backend/wwwroot/getpass.html.  
 
-#### Frontend Installation
+### Frontend Installation
 Install web extension on browser. It won't work yet.  
 Add 'python frontend/webextension_server/httpserver.py' to startup.  
 Change "host" and "port" parameters in frontend/webextension_server/communicator.py 
@@ -40,6 +43,9 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 08/29/2017 v1.1.1 (id01)  
+ * Ditched tcpserver in favor of Python SocketServer  
+ * Used Google CDN due to efficiency... This can be disabled.  
 * 08/28/2017 v1.1.0 (id01)  
  * Made cli run off communicator, so I only need to change one file instead of two  
  * No more double-base64ing for AES encrypted stuff!  
@@ -88,4 +94,3 @@ Note: Licenses for software used can be found in licenses/
 * Mysql (server only)  
 * secure-delete (server only)  
 * An http server (server only)  
-* tcpserver (server only)
