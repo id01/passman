@@ -5,9 +5,9 @@ import subprocess;
 
 class RequestHandler(SocketServer.BaseRequestHandler):
 	def handle(self):
+		sys.stderr.write(self.client_address[0] + " connected.\n");
 		conn = self.request;
 		conn.settimeout(0.5);
-		print self.client_address[0] + " connected.";
 		data = conn.recv(4096);
 		if data:
 			sub = subprocess.Popen(["python", "passwords.py"], stdout=subprocess.PIPE, stdin=subprocess.PIPE);

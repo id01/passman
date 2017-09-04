@@ -8,12 +8,14 @@ This is a (no longer so) simple password manager that runs on mySQL.
 Its primary feature is that the server knows a minimal amount of data about the user (IP is logged, though).  
 Account names and usernames are hashed, and passwords are encrypted.  
 Passwords can be gotten through an HTTP service.  
+Note: It's probably a good idea to put HTTP authentication on backend/wwwroot/setup.php.  
 
 ## Installation
 ### Backend Installation
 Install dependencies.  
 Run ./setup.sh  
 Run ./service.sh to start the service.  
+Replace the string specified in backend/wwwroot/setup.php with the sha256 hash of the signup password.
 Symlink a folder on your webserver to backend/wwwroot for setting up of new users from the internet.  
 #### Optional
 To remove Google CDN, download jQuery (production version) and move it to backend/wwwroot/bootstrap/jquery.js, then remove 
@@ -43,6 +45,9 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 09/04/2017 v1.1.2 (id01)
+ * Fixed some small things
+ * A bit of authentication with wwwroot
 * 08/29/2017 v1.1.1 (id01)  
  * Ditched tcpserver in favor of Python SocketServer  
  * Used Google CDN due to efficiency... This can be disabled.  

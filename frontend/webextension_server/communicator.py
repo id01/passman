@@ -67,6 +67,9 @@ def communicate(username, masterkey, command):
 	# Verify password using get_eccpriv()
 	try:
 		get_eccpriv();
+	except socket.error:
+		sys.stderr.write("Communication Error.\n");
+		return "ErrMsg\x04Communication error";
 	except Exception:
 		sys.stderr.write("Username or Password incorrect.\n");
 		return "ErrPss\x04Username or Password incorrect";
