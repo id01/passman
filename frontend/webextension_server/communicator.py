@@ -66,7 +66,7 @@ def communicate(username, masterkey, command):
 
 	# Verify password using get_eccpriv()
 	try:
-		get_eccpriv();
+		eccpriv = get_eccpriv();
 	except socket.error:
 		sys.stderr.write("Communication Error.\n");
 		return "ErrMsg\x04Communication error";
@@ -95,18 +95,12 @@ def communicate(username, masterkey, command):
 		passlen = int(passlenraw);
 		if passlen < 8:
 			return "Error: Password Length must be >= 8";
-		# I need the ecc key
-		try:
-			eccpriv = get_eccpriv();
-			eccpub = get_eccpub();
-		except Exception:
-			sys.stderr.write("User doesn't exist!\n");
-			return "Error: User doesn't exist";
+		# I already have the ecc key as eccpriv
 		# Connect to server. Request transmission
 		sys.stderr.write("Initiating connection with server...\n");
 		remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM);
 		remote.connect((host, port));
-		remote.send("ADD\n" + account + "\n" + username + "\n");
+		remote.send("ADD\n" + username + "\n" + account + "\n");
 		# Perform handshake
 		sys.stderr.write("Inserting new password...\n");
 		challenge = get_sockline(remote);
@@ -133,7 +127,7 @@ def communicate(username, masterkey, command):
 		sys.stderr.write("Getting password from server...\n");
 		remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM);
 		remote.connect((host, port));
-		remote.send("GET\n" + account + "\n" + username + "\n");
+		remote.send("GET\n" + username + "\n" + account + "\n");
 		passraw = remote.recv(4096);
 		remote.close();
 		if passraw[:6] != "VALID ":

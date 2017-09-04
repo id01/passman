@@ -46,8 +46,10 @@ NOTE: You can still bypass firewalls if you host the service on port 80 :)
 
 ## Changelog
 * 09/04/2017 v1.1.2 (id01)
- * Fixed some small things
- * A bit of authentication with wwwroot
+ * Fixed some small things  
+ * A bit of authentication with wwwroot  
+ * Got ADD to work again  
+ * Merged passwords.py and service.py in backend, greatly improving efficiency  
 * 08/29/2017 v1.1.1 (id01)  
  * Ditched tcpserver in favor of Python SocketServer  
  * Used Google CDN due to efficiency... This can be disabled.  
