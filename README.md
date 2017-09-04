@@ -20,6 +20,7 @@ Symlink a folder on your webserver to backend/wwwroot for setting up of new user
 #### Optional
 To remove Google CDN, download jQuery (production version) and move it to backend/wwwroot/bootstrap/jquery.js, then remove 
 and uncomment the lines marked in backend/wwwroot/getpass.html.  
+To change listening port, change the port '3000' in both backend/passwordservice.py and backend/wwwroot/getpass.php.  
 
 ### Frontend Installation
 Install web extension on browser. It won't work yet.  
@@ -49,7 +50,7 @@ NOTE: You can still bypass firewalls if you host the service on port 80 :)
  * Fixed some small things  
  * A bit of authentication with wwwroot  
  * Got ADD to work again  
- * Merged passwords.py and service.py in backend, greatly improving efficiency  
+ * Merged passwords.py and service.py in backend, greatly improving speed and efficiency  
 * 08/29/2017 v1.1.1 (id01)  
  * Ditched tcpserver in favor of Python SocketServer  
  * Used Google CDN due to efficiency... This can be disabled.  

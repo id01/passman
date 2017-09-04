@@ -168,5 +168,5 @@ class RequestHandler(SocketServer.BaseRequestHandler):
 		conn.shutdown(socket.SHUT_RDWR);
 		conn.close();
 
-sserver = SocketServer.TCPServer(('0.0.0.0', 3000), RequestHandler);
+sserver = SocketServer.TCPServer(('0.0.0.0', 3000), RequestHandler); # This port must be changed along with that in getpass.php
 sserver.serve_forever();

@@ -10,7 +10,7 @@ while (file_exists($mytokenfile))
 {
         $mytokenfile = "/tmp/passman_" . rand() . ".tmp";
 }
-$pfile = popen("python ../passwords.py > " . $mytokenfile, "w");
+$pfile = popen("nc localhost 3000 > " . $mytokenfile, "w"); // This port must be changed along with that in passwordservice.py
 fwrite($pfile, "GET\n");
 fwrite($pfile, $_POST["account"] . "\n");
 fwrite($pfile, $_POST["userin"] . "\n");
