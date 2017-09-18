@@ -2,38 +2,31 @@
 import sys;
 import _mysql;
 import MySQLdb;
-import hashlib;
-import cryptography;
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes;
-from cryptography.hazmat.backends import default_backend;
-from cryptography.hazmat.primitives import hashes;
-from cryptography.hazmat.primitives.asymmetric import ec;
-from cryptography.hazmat.primitives import serialization;
 import os;
 import base64;
-backend = default_backend();
+import string; string_b64digits = string.digits+string.uppercase+string.lowercase+"+/=";
 
-import simpleraes2;
-from simpleraes2 import *;
+# Check if string is base64
+def isBase64(s):
+	return all(c in string_b64digits for c in s);
+# Check if string is hex
+def isHex(s):
+	return all(c in string.hexdigits for c in s);
 
 # Get master symmetric key
-username = raw_input("");
-userhash = hashlib.sha256(username).hexdigest();
-key = raw_input("");
-# Generate ECC key (used for signing)
-eccprv = ec.generate_private_key(ec.SECT571K1(), default_backend());
-eccpub = eccprv.public_key();
-# Export ECC keys
-eccprvs = eccprv.private_bytes(encoding=serialization.Encoding.DER, format=serialization.PrivateFormat.PKCS8, encryption_algorithm=serialization.NoEncryption());
-eccpubs = eccpub.public_bytes(encoding=serialization.Encoding.DER, format=serialization.PublicFormat.SubjectPublicKeyInfo);
-eccencs = encryptAES(eccprvs, key);
+userhash = raw_input("");
+eccpubs = raw_input("");
+eccencs = raw_input("");
+if not (isHex(userhash) and isHex(eccpubs) and isBase64(eccencs)):
+	print "Username or ECC key is not correctly encoded. Please try again.";
+	exit(1);
 # Connect to database
 db = MySQLdb.connect(user='passman', db='passwords');
 dbc = db.cursor();
 # Add user to database
 try:
-	dbc.execute("create table " + userhash + " (account CHAR(32), encrypted VARCHAR(4096))");
-	dbc.execute("insert into cryptokeys (userhash, public, private) values ('" + userhash + "', '" + base64.b64encode(eccpubs) + "', '" + eccencs + "')");
+	dbc.execute("create table " + userhash + " (account CHAR(32), encrypted VARCHAR(400))");
+	dbc.execute("insert into cryptokeys (userhash, public, private) values (%s, %s, %s)", (userhash, eccpubs, eccencs));
 	db.commit();
 except _mysql.OperationalError:
 	print "User already exists!";

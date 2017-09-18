@@ -1,11 +1,27 @@
 <html>
+<head>
+<script src="bootstrap/triplesec.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="javascript/setup.min.js"></script>
+<script src="bootstrap/jsrsasign.js"></script>
+<script src="bootstrap/md5.js"></script>
+</head>
 <body>
-<form method="post" action="setup.php">
-Username: <input type="text" name="username"><br/>
-Master Key: <input type="password" name="key"><br/>
-Verify: <input type="password" name="key2"><br/>
-Server Password: <input type="password" name="auth"><br/>
+<div id="error" style="display:none; color:red"></div>
+<div id="status" style="display:none"></div>
+<form id="userform" action="javascript:void(0);">
+Username: <input type="text" id="username_input"><br/>
+Master Key: <input type="password" id="password_input"><br/>
+Verify: <input type="password" id="password2"><br/>
+Server Password: <input type="password" id="auth"><br/>
 <input type="submit" value="submit"><br/>
 </form>
+<form id="submitform" style="display:none" method="post" action="setup.php">
+Username Hash: <input type="text" name="userhash" id="userhash"><br/>
+ECC Public Key: <input type="text" name="public" id="public"><br/>
+ECC Encrypted Private Key: <input type="text" name="encryptedprivate" id="encryptedprivate"><br/>
+Server Password: <input type="password" name="auth" id="serverauth"><br/>
+</form>
+<script>document.getElementById("userform").addEventListener("submit", generateSubmitForm);</script>
 </body>
 </html>

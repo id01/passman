@@ -9,6 +9,7 @@ Its primary feature is that the server knows a minimal amount of data about the 
 Account names and usernames are hashed, and passwords are encrypted.  
 Passwords can be gotten through an HTTP service.  
 Note: It's probably a good idea to put HTTP authentication on backend/wwwroot/setup.php.  
+Another Note: Listens over port 3000  
 
 ## Installation
 ### Backend Installation
@@ -18,9 +19,8 @@ Run ./service.sh to start the service.
 Replace the string specified in backend/wwwroot/setup.php with the sha256 hash of the signup password.
 Symlink a folder on your webserver to backend/wwwroot for setting up of new users from the internet.  
 #### Optional
-To remove Google CDN, download jQuery (production version) and move it to backend/wwwroot/bootstrap/jquery.js, then remove 
-and uncomment the lines marked in backend/wwwroot/getpass.html.  
-To change listening port, change the port '3000' in both backend/passwordservice.py and backend/wwwroot/getpass.php.  
+To remove Google CDN, download jQuery (production version) and move it to backend/wwwroot/bootstrap/jquery.js, then change
+all the references in the addpass/getpass/setup HTML files to bootstrap/jquery.js.  
 
 ### Frontend Installation
 Install web extension on browser. It won't work yet.  
@@ -46,20 +46,41 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
-* 09/04/2017 v1.1.2 (id01)
+* 09/18/2017 v0.3.1 (id01)
+ * Minor fixes in error messages  
+ * Transferred some PHP input verification over to Python  
+ * Rewrote isBase64  
+ * Used %s for SQL queries  
+ * Imposed a strict length limit for passwords, reducing the VARCHAR size of each user table  
+ * Locked down passwordservice.py to localhost  
+ * Greatly reduced load on server  
+* (not committed) v0.3.0 (id01)
+ * Biggest update EVER (again)  
+ * Rewrote most of the entire backend, making the server know even less about the user.  
+  * The server now only ever knows the MD5 hash of the user's username.
+  * The server now does NOT know the user's private key at all, even during signup!
+  * The server now does NOT know the user's AES key at all, even during signup!
+ * The client now uses secp256k1 instead of secp521k1 for asymmetric encryption.  
+  * This is because jsrsasign does not support any sec____k1 curves other than 256.
+ * Switched symmetric encryption algorithm from two layers of AES to Salsa20+AES+Twofish.  
+  * See more at https://keybase.io/triplesec/
+ * ADD now runs completely over HTTP(s)!  
+ * Increased ADD signature security by adding delimiters and by having the user sign the account as well.  
+ * Shows decryption progress  
+* 09/04/2017 v0.2.3 (id01)
  * Fixed some small things  
  * A bit of authentication with wwwroot  
  * Got ADD to work again  
  * Merged passwords.py and service.py in backend, greatly improving speed and efficiency  
-* 08/29/2017 v1.1.1 (id01)  
+* 08/29/2017 v0.2.2 (id01)  
  * Ditched tcpserver in favor of Python SocketServer  
  * Used Google CDN due to efficiency... This can be disabled.  
-* 08/28/2017 v1.1.0 (id01)  
+* 08/28/2017 v0.2.1 (id01)  
  * Made cli run off communicator, so I only need to change one file instead of two  
  * No more double-base64ing for AES encrypted stuff!  
  * Switched from PEM+base64 to DER+base64!  
  * Made another migrate script, not going to upload it because nobody needs it anyway...  
-* 08/27/2017 v1.0.0 (id01)  
+* 08/27/2017 v0.2.0 (id01)  
  * Biggest update EVER  
  * Rewrote the entire backend, changing ECC/AES libraries to python cryptography  
  * Rewrote most of the entire webextension so no native messaging, and more portable too  
@@ -90,7 +111,8 @@ NOTE: You can still bypass firewalls if you host the service on port 80 :)
  * Start of project.  
 
 ## Credits
-* sjcl library (BSD License)  
+* jsrsasign (jsrsasign license)  
+* JavaScript-MD5 (MIT license)  
 * jQuery (MIT license)  
 * Python, WebExtensions, Javascript, PHP, HTML, C, Shell and every other programming language I used :)
  Also, special thanks to my PC, router, Raspberry Pi, and web browser for making this possible :D Lol
@@ -98,7 +120,6 @@ Note: Licenses for software used can be found in licenses/
 
 ## Dependencies
 * Python 2.x  
-* Python cryptography library  
-* Mysql (server only)  
-* secure-delete (server only)  
+* Python cryptography library (server only)  
+* MySQL (server only)  
 * An http server (server only)  
