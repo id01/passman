@@ -46,7 +46,10 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
-* 09/18/2017 v0.3.1 (id01)
+* 09/18/2017 v0.3.2 (id01)  
+ * Changed SQL to use only one table for all users.  
+ * Fixed a glitch where signups will only show after the server has been restarted.  
+* 09/18/2017 v0.3.1 (id01)  
  * Minor fixes in error messages  
  * Transferred some PHP input verification over to Python  
  * Rewrote isBase64  
@@ -54,20 +57,20 @@ NOTE: You can still bypass firewalls if you host the service on port 80 :)
  * Imposed a strict length limit for passwords, reducing the VARCHAR size of each user table  
  * Locked down passwordservice.py to localhost  
  * Greatly reduced load on server  
-* (not committed) v0.3.0 (id01)
+* (not committed) v0.3.0 (id01)  
  * Biggest update EVER (again)  
  * Rewrote most of the entire backend, making the server know even less about the user.  
-  * The server now only ever knows the MD5 hash of the user's username.
-  * The server now does NOT know the user's private key at all, even during signup!
-  * The server now does NOT know the user's AES key at all, even during signup!
+  * The server now only ever knows the MD5 hash of the user's username.  
+  * The server now does NOT know the user's private key at all, even during signup!  
+  * The server now does NOT know the user's AES key at all, even during signup!  
  * The client now uses secp256k1 instead of secp521k1 for asymmetric encryption.  
-  * This is because jsrsasign does not support any sec____k1 curves other than 256.
+  * This is because jsrsasign does not support any sec____k1 curves other than 256.  
  * Switched symmetric encryption algorithm from two layers of AES to Salsa20+AES+Twofish.  
-  * See more at https://keybase.io/triplesec/
+  * See more at https://keybase.io/triplesec/  
  * ADD now runs completely over HTTP(s)!  
  * Increased ADD signature security by adding delimiters and by having the user sign the account as well.  
  * Shows decryption progress  
-* 09/04/2017 v0.2.3 (id01)
+* 09/04/2017 v0.2.3 (id01)  
  * Fixed some small things  
  * A bit of authentication with wwwroot  
  * Got ADD to work again  
