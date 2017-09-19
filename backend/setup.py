@@ -25,10 +25,12 @@ db = MySQLdb.connect(user='passman', db='passwords');
 dbc = db.cursor();
 # Add user to database
 try:
-	dbc.execute("create table " + userhash + " (account CHAR(32), encrypted VARCHAR(400))");
-	dbc.execute("insert into cryptokeys (userhash, public, private) values (%s, %s, %s)", (userhash, eccpubs, eccencs));
-	db.commit();
-except _mysql.OperationalError:
+#	dbc.execute("create table " + userhash + " (account CHAR(32), encrypted VARCHAR(400))");
+	dbc.execute("select public from cryptokeys where userhash=%s", (userhash,));
+	dbc.fetchone()[0];
 	print "User already exists!";
 	exit(1);
+except (IndexError, TypeError):
+	dbc.execute("insert into cryptokeys (userhash, public, private) values (%s, %s, %s)", (userhash, eccpubs, eccencs));
+	db.commit();
 print "Success!"

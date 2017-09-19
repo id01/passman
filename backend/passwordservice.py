@@ -21,7 +21,6 @@ backend = default_backend();
 # Connect to mysql server
 try:
 	db = MySQLdb.connect(user='passman', db='passwords');
-	dbc = db.cursor();
 # If database does not yet exist
 except _mysql_exceptions.OperationalError:
 	print "Something went wrong with contacting the database... Did you run setup.sh?"
@@ -51,11 +50,12 @@ class connection:
 		self.conn = myConn;
 		self.addsession_challenge = None; # Session for adding a key (challenge)
 		self.addsession_accounthash = None; # Session for adding a key (hash)
+		self.dbc = db.cursor(); # Cursor on database connection
 		# Get user ECC key
 		try:
 			self.userhash = [myUserhash][not isHex(myUserhash)]; # Verify hexness of myUserhash before assignment
-			dbc.execute("SELECT public FROM cryptokeys WHERE userhash=%s", (self.userhash,))
-			self.public_der_hex = dbc.fetchone()[0];
+			self.dbc.execute("SELECT public FROM cryptokeys WHERE userhash=%s", (self.userhash,))
+			self.public_der_hex = self.dbc.fetchone()[0];
 		except (IndexError, TypeError):
 			raise ValueError("User doesn't exist"); # User doesn't exist
 
@@ -84,7 +84,7 @@ class connection:
 			return 2; # Wrong signature or invalid password
 		# Insert into database
 		try:
-			dbc.execute("INSERT into " + self.userhash + " (account, encrypted) VALUES (%s, %s)", (self.addsession_accounthash, passwordcrypt));
+			self.dbc.execute("INSERT into passwords (userhash, account, encrypted) VALUES (%s, %s, %s)", (self.userhash, self.addsession_accounthash, passwordcrypt));
 			db.commit();
 		except MySQLdb.DataError:
 			return 3; # Password too long
@@ -107,18 +107,18 @@ class connection:
 	# Function to get password
 	def get_password(self, account):
 		# Get password
-		dbc.execute("SELECT encrypted FROM "+self.userhash+" WHERE account=%s", (account,));
+		self.dbc.execute("SELECT encrypted FROM passwords WHERE account=%s AND userhash=%s", (account, self.userhash));
 		try:
-			f = dbc.fetchone()[0];
+			f = self.dbc.fetchone()[0];
 		except (IndexError, TypeError):
 			return ""; # Entry doesn't exist
 		return f;
 
 	def get_ecckey(self):
 		# Get encrypted ECC private key
-		dbc.execute("select private from cryptokeys where userhash=%s", (self.userhash,));
+		self.dbc.execute("select private from cryptokeys where userhash=%s", (self.userhash,));
 		try:
-			return dbc.fetchone()[0];
+			return self.dbc.fetchone()[0];
 		except IndexError:
 			return "";
 
