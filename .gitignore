@@ -1,3 +1,4 @@
 *.pyc
 *.log
 backend/wwwroot/javascript/minify.sh
+webextension
