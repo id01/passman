@@ -15,15 +15,17 @@ Another Note: Listens over port 3000
 ### Backend Installation
 Install dependencies.  
 Run ./setup.sh  
-Run ./service.sh to start the service.  
-Replace the string specified in backend/wwwroot/setup.php with the sha256 hash of the signup password.
+Run python passwordservice.py to run the service.  
+Replace the string specified in backend/wwwroot/setup.php with the sha256 hash of the signup password.  
 Symlink a folder on your webserver to backend/wwwroot for setting up of new users from the internet.  
+Run ./build_wwwroot.sh to build wwwroot javascript files.  
 #### Optional
 To remove Google CDN, download jQuery (production version) and move it to backend/wwwroot/bootstrap/jquery.js, then change
 all the references in the addpass/getpass/setup HTML files to bootstrap/jquery.js.  
 
 ### Frontend Installation
-Generate webextension on server by executing "create_webextension.py" and following the prompts.  
+Make sure server is correctly set up.  
+Generate webextension on server by executing "python create_webextension.py" and following the prompts.  
 Install webextension on browser.  
 
 ## Features
@@ -43,6 +45,8 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 09/24/2017 v0.3.7 (id01)  
+	* You build wwwroot.  
 * 09/23/2017 v0.3.6 (id01)  
 	* Created webextension for the new stuff  
 * (not committed) v0.3.5 (id01)  

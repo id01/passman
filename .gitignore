@@ -1,4 +1,5 @@
 *.pyc
 *.log
-backend/wwwroot/javascript/minify.sh
 webextension
+backend/wwwroot/bootstrap/bootstrap.js
+backend/wwwroot/javascript/*.min.js

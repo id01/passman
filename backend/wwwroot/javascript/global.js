@@ -23,7 +23,7 @@ function sjclkeydev(key, salt) {
 	var saltBits = hex.toBits(hex.fromBits(salt));
 	var pbkdf2key = sjcl.misc.pbkdf2(key, saltBits, 8192, 256);
 	var scryptkey = sjcl.misc.scrypt(key, saltBits, 8192, 8, 1, 256);
-	return sjcl.hash.sha256.hash(pbkdf2key.concat(scryptkey));
+	return pbkdf2key.concat(scryptkey);
 }
 function sjclencrypt(plaintext, key) {
 	// Create Values

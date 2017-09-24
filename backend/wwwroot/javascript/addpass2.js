@@ -10,6 +10,7 @@ function challengeSubmitAction(event) {
 }
 // Function to generate a password
 function makePassword() {
+//	var text = prompt("Enter pass: ", ""); // Uncomment to import passwords
 	var text = "";
 	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!";
 	var choice = new Uint8Array(1);
@@ -21,7 +22,6 @@ function makePassword() {
 }
 // Called by challengeSubmitAction. Builds the verifyForm input
 function buildVerifyForm(data) {
-	var userpass = document.getElementById("password_input").value;
 	// Copy username
 	document.getElementById("verifyform").querySelector("[name=userhash]").value = document.getElementById("challengeform").querySelector("[name=userhash]").value;
 	// Parse data
