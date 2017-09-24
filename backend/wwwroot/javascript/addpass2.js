@@ -84,6 +84,10 @@ function printVerifyResult(data) {
 	} else {
 		notification.style.color = "green";
 		notification.innerHTML = "Result: " + data;
+		if (document.location.search == "?extension" && data == "Success!") {
+			notification.innerHTML = "Password copied to clipboard.";
+			copyAction();
+		}
 	}
 }
 // Copies the decrypted password.

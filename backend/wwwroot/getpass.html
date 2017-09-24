@@ -1,7 +1,6 @@
 <html>
 <head>
 <script src="bootstrap/bootstrap.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
 <script src="javascript/global.min.js"></script>
@@ -17,12 +16,6 @@ Account Name: <input type="text" name="account"><br/>
 Account Password: <input id="decrypted" type="password" disabled="true">
 <button id="copybutton" type="button">Copy</button>
 </div>
-<script>
-document.getElementById("getform").addEventListener("submit", submitAction);
-document.getElementById("copybutton").addEventListener("click", copyAction);
-if (document.location.search == "?extension") {
-	document.getElementById("resultdiv").style = "display:none";
-}
-</script>
+<script src="javascript/getpassHandlers.js"></script>
 </body>
 </html>

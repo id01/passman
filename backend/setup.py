@@ -1,9 +1,6 @@
 # This script sets up a new user for the database
-import sys;
 import _mysql;
 import MySQLdb;
-import os;
-import base64;
 import string; string_b64digits = string.digits+string.uppercase+string.lowercase+"+/=";
 
 # Check if string is base64

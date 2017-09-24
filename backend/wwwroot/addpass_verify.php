@@ -1,5 +1,4 @@
 <?php
-$passwordPort = 3000;
 if ($_POST["userhash"] == "" || $_POST["passwordcrypt"] == "" || $_POST["signature"] == "")
 {
         echo "Something went wrong.";
@@ -8,20 +7,18 @@ if ($_POST["userhash"] == "" || $_POST["passwordcrypt"] == "" || $_POST["signatu
 	session_start();
 	// Try adding password
 	chdir(realpath("."));
-	$mytokenfile = "/tmp/passman_0.tmp";
-	while (file_exists($mytokenfile))
-	{
-		$mytokenfile = "/tmp/passman_" . rand() . ".tmp";
+	$sock = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$sock || !socket_connect($sock, "/tmp/passmansocket")) {
+		echo "Internal Server Error.";
+	} else {
+		socket_write($sock, "ADDP\n");
+		socket_write($sock, $_POST["userhash"] . "\n");
+		socket_write($sock, $_SESSION["account"] . "\n");
+		socket_write($sock, $_SESSION["challenge"] . "\n");
+		socket_write($sock, $_POST["passwordcrypt"] . "\n");
+		socket_write($sock, $_POST["signature"] . "\n");
+		echo socket_read($sock, 4096, PHP_BINARY_READ);
+		socket_shutdown($sock);
 	}
-	$pfile = popen("nc localhost " . $passwordPort . " > " . $mytokenfile, "w");
-	fwrite($pfile, "ADDP\n");
-	fwrite($pfile, $_POST["userhash"] . "\n");
-	fwrite($pfile, $_SESSION["account"] . "\n");
-	fwrite($pfile, $_SESSION["challenge"] . "\n");
-	fwrite($pfile, $_POST["passwordcrypt"] . "\n");
-	fwrite($pfile, $_POST["signature"] . "\n");
-	pclose($pfile);
-	echo file_get_contents($mytokenfile);
-	unlink($mytokenfile);
 }
 ?>

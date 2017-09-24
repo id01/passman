@@ -127,7 +127,7 @@ class connection:
 		return self.public_der_hex;
 
 # Main
-def main(conn, clientip):
+def main(conn):
 	# Get command and username, initialize connection object, return if it doesn't exist
 	rawInput = conn.recv(1024).split('\n');
 	if not rawInput:
@@ -154,7 +154,7 @@ def main(conn, clientip):
 				resultStr = "Signature invalid.";
 			elif result == 3:
 				resultStr = "Password already exists!";
-		elif command == 'ADDP' and clientip == '127.0.0.1':
+		elif command == 'ADDP':
 			account = rawInput[2];
 			challenge = rawInput[3];
 			result = connObj.add_password_PHP(account, challenge, rawInput[4:]);
@@ -199,12 +199,20 @@ def main(conn, clientip):
 
 class RequestHandler(SocketServer.BaseRequestHandler):
 	def handle(self):
-		sys.stderr.write(self.client_address[0] + " connected.\n");
+		sys.stderr.write("Client connected.\n");
 		conn = self.request;
 		conn.settimeout(1);
-		main(conn, self.client_address[0]);
+		main(conn);
 		conn.shutdown(socket.SHUT_RDWR);
 		conn.close();
 
-sserver = SocketServer.TCPServer(('127.0.0.1', 3000), RequestHandler); # This port must be changed along with that in getpass.php
+try:
+	os.unlink('/tmp/passmansocket');
+except Exception:
+	pass;
+sserver = SocketServer.UnixStreamServer("/tmp/passmansocket", RequestHandler); # This port must be changed along with that in getpass.php
+if os.system('chgrp www-data /tmp/passmansocket') == 1:
+	print "Chgrp permission denied. Are you sure this user is in the www-data group?";
+	exit(1);
+os.system('chmod g+w /tmp/passmansocket');
 sserver.serve_forever();

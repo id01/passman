@@ -22,6 +22,8 @@ mkdir(EXTROOT+"/javascript");
 www2ext("bootstrap/bootstrap.js");
 www2ext("javascript/addpass2.min.js");
 www2ext("javascript/getpass2.min.js");
+www2ext("javascript/getpassHandlers.js");
+www2ext("javascript/addpassHandlers.js");
 with open(EXTROOT+"/javascript/global.min.js", 'w') as globalFile:
 	globalFile.write('var urllocation = "'+URLLOCATION+'";');
 	with open(WWWROOT+"/javascript/global.js", 'r') as globalFileWWW:

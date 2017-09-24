@@ -1,7 +1,6 @@
 <?php
 // Line 1: Challenge
 // Line 2: Encrypted ECC Private Key
-$passwordPort = 3000;
 if ($_POST["account"] == "" || $_POST["userhash"] == "")
 {
         echo "Error: Username or Account Name not specified";
@@ -17,16 +16,14 @@ if ($_POST["account"] == "" || $_POST["userhash"] == "")
 	echo $_SESSION["challenge"]."\n";
 	// Get ECC private key (encrypted) from server
 	chdir(realpath("."));
-	$mytokenfile = "/tmp/passman_0.tmp";
-	while (file_exists($mytokenfile))
-	{
-		$mytokenfile = "/tmp/passman_" . rand() . ".tmp";
+	$sock = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$sock || !socket_connect($sock, "/tmp/passmansocket")) {
+		echo "Internal Server Error.";
+	} else {
+		socket_write($sock, "GETECC\n");
+		socket_write($sock, $_POST["userhash"] . "\n");
+		echo socket_read($sock, 4096, PHP_BINARY_READ);
+		socket_shutdown($sock);
 	}
-	$pfile = popen("nc localhost " . $passwordPort . " > " . $mytokenfile, "w");
-	fwrite($pfile, "GETECC\n");
-	fwrite($pfile, $_POST["userhash"] . "\n");
-	pclose($pfile);
-	echo file_get_contents($mytokenfile);
-	unlink($mytokenfile);
 }
 ?>

@@ -7,17 +7,15 @@ if ($_POST["account"] == "" || $_POST["userhash"] == "")
 	echo "Account hash is malformed. Please try again.";
 } else {
 	chdir(realpath("."));
-	$mytokenfile = "/tmp/passman_0.tmp";
-	while (file_exists($mytokenfile))
-	{
-		$mytokenfile = "/tmp/passman_" . rand() . ".tmp";
+	$sock = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$sock || !socket_connect($sock, "/tmp/passmansocket")) {
+		echo "Internal Server Error.";
+	} else {
+		socket_write($sock, "GET\n");
+		socket_write($sock, $_POST["userhash"] . "\n");
+		socket_write($sock, $_POST["account"] . "\n");
+		echo socket_read($sock, 4096, PHP_BINARY_READ);
+		socket_shutdown($sock);
 	}
-	$pfile = popen("nc localhost 3000 > " . $mytokenfile, "w"); // This port must be changed along with that in passwordservice.py
-	fwrite($pfile, "GET\n");
-	fwrite($pfile, $_POST["userhash"] . "\n");
-	fwrite($pfile, $_POST["account"] . "\n");
-	pclose($pfile);
-	echo file_get_contents($mytokenfile);
-	unlink($mytokenfile);
 }
 ?>

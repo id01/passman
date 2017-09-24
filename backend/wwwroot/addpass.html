@@ -1,7 +1,6 @@
 <html>
 <head>
 <script src="bootstrap/bootstrap.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
 <script src="javascript/global.min.js"></script>
@@ -26,13 +25,6 @@ ECC priv key: <input type="text" id="ecckey"><br/>
 Encrypted Password: <input type="text" id="encryptedpass" name="passwordcrypt"><br/>
 Signature: <input type="text" id="signature" name="signature"><br/>
 </form>
-<script>
-document.getElementById("challengeform").addEventListener("submit", challengeSubmitAction);
-document.getElementById("verifyform").addEventListener("submit", verifySubmitAction);
-document.getElementById("copybutton").addEventListener("click", copyAction);
-if (document.location.search == "?extension") {
-	document.getElementById("resultdiv").style = "display:none";
-}
-</script>
+<script src="javascript/addpassHandlers.js"></script>
 </body>
 </html>

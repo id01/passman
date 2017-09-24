@@ -23,6 +23,10 @@ function updateEncrypted(data) {
 			document.getElementById("decrypted").value = str.fromBits(sjcldecrypt(b64.toBits(encPassword), passwd));
 			notification.style.color = "green";
 			notification.innerHTML = "Done.";
+			if (document.location.search == "?extension") {
+				notification.innerHTML = "Password copied to clipboard.";
+				copyAction();
+			}
 		} catch (err) {
 			document.getElementById('notification').style.color = "red";
 			document.getElementById('notification').innerHTML = "Incorrect Password.";

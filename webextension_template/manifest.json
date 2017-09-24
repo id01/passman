@@ -5,8 +5,10 @@
 
 	"description": "WebExtension for password manager!",
 
+
 	"permissions": [
-		_URLLOCATION_
+		_URLLOCATION_,
+		"clipboardWrite"
 	],
 
 	"browser_action": {

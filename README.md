@@ -19,9 +19,7 @@ Run python passwordservice.py to run the service.
 Replace the string specified in backend/wwwroot/setup.php with the sha256 hash of the signup password.  
 Symlink a folder on your webserver to backend/wwwroot for setting up of new users from the internet.  
 Run ./build_wwwroot.sh to build wwwroot javascript files.  
-#### Optional
-To remove Google CDN, download jQuery (production version) and move it to backend/wwwroot/bootstrap/jquery.js, then change
-all the references in the addpass/getpass/setup HTML files to bootstrap/jquery.js.  
+Add the user that will be running passwordservice to the group www-data.  
 
 ### Frontend Installation
 Make sure server is correctly set up.  
@@ -45,6 +43,9 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 09/24/2017 v0.3.8 (id01)  
+	* Removed Google CDN.  
+	* Improved webextension, including auto-copy.  
 * 09/24/2017 v0.3.7 (id01)  
 	* You build wwwroot.  
 * 09/23/2017 v0.3.6 (id01)  
