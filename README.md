@@ -23,11 +23,8 @@ To remove Google CDN, download jQuery (production version) and move it to backen
 all the references in the addpass/getpass/setup HTML files to bootstrap/jquery.js.  
 
 ### Frontend Installation
-Install web extension on browser. It won't work yet.  
-Add 'python frontend/webextension_server/httpserver.py' to startup.  
-Change "host" and "port" parameters in frontend/webextension_server/communicator.py 
-to appropriate values so you can connect to the right server.  
-Log out then log in.  
+Generate webextension on server by executing "create_webextension.py" and following the prompts.  
+Install webextension on browser.  
 
 ## Features
 Variable symmetric and elliptic curve algorithms. (Including AES-256 and sect571k1)  
@@ -46,9 +43,22 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 09/23/2017 v0.3.6 (id01)  
+	* Created webextension for the new stuff  
+* (not committed) v0.3.5 (id01)  
+	* Changed key derivation procedure for more security  
+* (not committed) v0.3.4 (id01)  
+	* Switched back from triplesec to sjcl.  
+	* Rewrote sjcl encryption/decryption procedure.  
+	* Used sjcl+salsa20 as well.  
+	* 2 layers of encryption, less kdf iterations - faster, but less secure (compared to triplesec).  
+* 09/20/2017 v0.3.3 (id01)  
+	* Fixed a glitch where signups will only show after the server has been restarted.  
+	* Tweaked triplesec for faster hashing, though that does mean lower resources used by an attacker.  
+		* Please choose strong passwords for this program... You have one job...  
 * 09/18/2017 v0.3.2 (id01)  
 	* Changed SQL to use only one table for all users.  
-	* Fixed a glitch where signups will only show after the server has been restarted.  
+	* Fixed a glitch where signups will only show after the server has been restarted (not really).  
 * 09/18/2017 v0.3.1 (id01)  
 	* Minor fixes in error messages  
 	* Transferred some PHP input verification over to Python  
@@ -117,8 +127,10 @@ NOTE: You can still bypass firewalls if you host the service on port 80 :)
 * jsrsasign (jsrsasign license)  
 * JavaScript-MD5 (MIT license)  
 * jQuery (MIT license)  
-* Python, WebExtensions, Javascript, PHP, HTML, C, Shell and every other programming language I used :)
- Also, special thanks to my PC, router, Raspberry Pi, and web browser for making this possible :D Lol
+* sjcl (BSD 2.0 license)  
+* sjcl-scrypt (BSD 2.0 license, by joe-invincible)  
+* Python, WebExtensions, Javascript, PHP, HTML, C, Shell and every other programming language I used :)  
+Also, special thanks to my PC, router, Raspberry Pi, and web browser for making this possible :D Lol  
 Note: Licenses for software used can be found in licenses/
 
 ## Dependencies

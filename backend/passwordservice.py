@@ -15,6 +15,7 @@ from cryptography.hazmat.primitives import serialization;
 import hashlib;
 import SocketServer;
 import socket;
+import traceback;
 import string; string_b64digits = string.digits+string.uppercase+string.lowercase+"+/=";
 backend = default_backend();
 
@@ -73,7 +74,7 @@ class connection:
 	# Add password - Part 2: Verify and Insert
 	def add_password_2(self, rawInput):
 		# Get signature.
-		public_der = self.public_der_hex.decode('hex');
+		public_der = self.public_der_hex.decode('base64');
 		eccpub = serialization.load_der_public_key(public_der, backend=backend);
 		try:
 			passwordcrypt = rawInput[0];
@@ -85,7 +86,6 @@ class connection:
 		# Insert into database
 		try:
 			self.dbc.execute("INSERT into passwords (userhash, account, encrypted) VALUES (%s, %s, %s)", (self.userhash, self.addsession_accounthash, passwordcrypt));
-			db.commit();
 		except MySQLdb.DataError:
 			return 3; # Password too long
 		return 0;
@@ -141,54 +141,61 @@ def main(conn, clientip):
 		conn.send(resultStr+'\n');
 		return;
 	# Parse commands
-	resultStr = "An unknown error occured.";
-	if command == 'ADD':
-		account = rawInput[2];
-		result = connObj.add_password(account);
-		if result == 0:
-			resultStr = "Success!";
-		elif result == 1:
-			resultStr = "Invalid input.";
-		elif result == 2:
-			resultStr = "Signature invalid.";
-		elif result == 3:
-			resultStr = "Password already exists!";
-	elif command == 'ADDP' and clientip == '127.0.0.1':
-		account = rawInput[2];
-		challenge = rawInput[3];
-		result = connObj.add_password_PHP(account, challenge, rawInput[4:]);
-		if result == 0:
-			resultStr = "Success!";
-		elif result == 1:
-			resultStr = "Invalid input.";
-		elif result == 2:
-			resultStr = "Signature invalid.";
-		elif result == 3:
-			resultStr = "Password too long.";
-		elif result == -1:
-			resultStr = "Password already exists!";
-	elif command == 'GET':
-		account = rawInput[2];
-		encpass = connObj.get_password(account);
-		if encpass == "":
-			resultStr = "Entry doesn't exist";
+	try:
+		resultStr = "An unknown error occured.";
+		if command == 'ADD':
+			account = rawInput[2];
+			result = connObj.add_password(account);
+			if result == 0:
+				resultStr = "Success!";
+			elif result == 1:
+				resultStr = "Invalid input.";
+			elif result == 2:
+				resultStr = "Signature invalid.";
+			elif result == 3:
+				resultStr = "Password already exists!";
+		elif command == 'ADDP' and clientip == '127.0.0.1':
+			account = rawInput[2];
+			challenge = rawInput[3];
+			result = connObj.add_password_PHP(account, challenge, rawInput[4:]);
+			if result == 0:
+				resultStr = "Success!";
+			elif result == 1:
+				resultStr = "Invalid input.";
+			elif result == 2:
+				resultStr = "Signature invalid.";
+			elif result == 3:
+				resultStr = "Password too long.";
+			elif result == -1:
+				resultStr = "Password already exists!";
+		elif command == 'GET':
+			account = rawInput[2];
+			encpass = connObj.get_password(account);
+			if encpass == "":
+				resultStr = "Entry doesn't exist";
+			else:
+				resultStr = "VALID " + encpass;
+		elif command == 'GETECC':
+			eccenc = connObj.get_ecckey();
+			if eccenc == "":
+				resultStr = "Entry doesn't exist";
+			else:
+				resultStr = "VALID " + eccenc;
+		elif command == 'GETPUB':
+			eccpub = connObj.get_pubkey();
+			if eccpub == "":
+				resultStr = "Entry doesn't exist";
+			else:
+				resultStr = "VALID " + eccpub;
 		else:
-			resultStr = "VALID " + encpass;
-	elif command == 'GETECC':
-		eccenc = connObj.get_ecckey();
-		if eccenc == "":
-			resultStr = "Entry doesn't exist";
-		else:
-			resultStr = "VALID " + eccenc;
-	elif command == 'GETPUB':
-		eccpub = connObj.get_pubkey();
-		if eccpub == "":
-			resultStr = "Entry doesn't exist";
-		else:
-			resultStr = "VALID " + eccpub;
-	else:
-		resultStr = "Syntax Error";
-	conn.send(resultStr+'\n');
+			resultStr = "Syntax Error";
+		conn.send(resultStr+'\n');
+		db.commit();
+	except Exception as ex:
+		db.rollback();
+		sys.stderr.write("Caught exception {}\n".format(ex));
+		traceback.print_exc();
+	connObj.dbc.close();
 
 class RequestHandler(SocketServer.BaseRequestHandler):
 	def handle(self):

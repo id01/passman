@@ -1,0 +1,15 @@
+{
+	"manifest_version": 2,
+	"name": "passman",
+	"version": "1.0",
+
+	"description": "WebExtension for password manager!",
+
+	"permissions": [
+		"http://localhost/passmantest/"
+	],
+
+	"browser_action": {
+		"default_popup": "index.html"
+	}
+}

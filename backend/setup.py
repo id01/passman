@@ -17,7 +17,7 @@ def isHex(s):
 userhash = raw_input("");
 eccpubs = raw_input("");
 eccencs = raw_input("");
-if not (isHex(userhash) and isHex(eccpubs) and isBase64(eccencs)):
+if not (isHex(userhash) and isBase64(eccpubs) and isBase64(eccencs)):
 	print "Username or ECC key is not correctly encoded. Please try again.";
 	exit(1);
 # Connect to database
@@ -25,7 +25,6 @@ db = MySQLdb.connect(user='passman', db='passwords');
 dbc = db.cursor();
 # Add user to database
 try:
-#	dbc.execute("create table " + userhash + " (account CHAR(32), encrypted VARCHAR(400))");
 	dbc.execute("select public from cryptokeys where userhash=%s", (userhash,));
 	dbc.fetchone()[0];
 	print "User already exists!";

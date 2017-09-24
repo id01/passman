@@ -1,19 +1,17 @@
-function updateStatus(statusObject) {
-	var statusSpan = document.getElementById("notif_status");
-	statusSpan.innerHTML = statusObject.what + ' - ' + (Math.ceil(1000*statusObject.i/statusObject.total)/10) + '...';
-}
+// Submits getForm
 function submitAction(event) {
 	event.preventDefault();
 	var notification = document.getElementById("notification");
 	notification.style.color = "";
 	notification.innerHTML = "Please wait...";
 	var getForm = document.getElementById("getform");
-	var userhash = md5(getForm.querySelector("[name=userin]").value);
-	jQuery.post("getpass.php", "userhash=" + userhash + "&account=" + md5(getForm.querySelector("[name=account]").value), updateEncrypted, "text");
+	var userhash = md5(getForm.querySelector("[name=userin]").value.toLowerCase());
+	jQuery.post(urllocation+"getpass.php", "userhash=" + userhash + "&account=" + md5(getForm.querySelector("[name=account]").value.toLowerCase()), updateEncrypted, "text");
 }
+// Decrypts the response to submitAction and writes to decrypted.
 function updateEncrypted(data) {
 	// Get data for vars and activate CBC
-	var pass = document.getElementById("password_input").value;
+	var passwd = document.getElementById("password_input").value;
 	var notification = document.getElementById("notification");
 	var encdata = data.split('\n')[0];
 	// Check output
@@ -21,24 +19,15 @@ function updateEncrypted(data) {
 	{
 		// Try decryption. If it fails, there is an incorrect password.
 		var encPassword = encdata.substring(6);
-		var decPassword;
-		document.getElementById('notification').innerHTML += ' <span id="notif_status"></span>';
-		triplesec.decrypt({
-			data: new triplesec.Buffer(encPassword, "base64"),
-			key: new triplesec.Buffer(pass),
-			progress_hook: updateStatus
-		}, function (err, buff) {
-			if (!err) {
-				decPassword = buff.toString();
-				notification.style.color = "green";
-				notification.innerHTML = "Done.";
-				document.getElementById("decrypted").value = decPassword;
-			} else {
-				notification.style.color = "red";
-				notification.innerHTML = "Incorrect password.";
-				console.log(err);
-			}
-		});
+		try {
+			document.getElementById("decrypted").value = str.fromBits(sjcldecrypt(b64.toBits(encPassword), passwd));
+			notification.style.color = "green";
+			notification.innerHTML = "Done.";
+		} catch (err) {
+			document.getElementById('notification').style.color = "red";
+			document.getElementById('notification').innerHTML = "Incorrect Password.";
+			return;
+		}
 	}
 	else
 	{
@@ -46,6 +35,7 @@ function updateEncrypted(data) {
 		notification.innerHTML = "Error getting entry: "+encdata;
 	}
 }
+// Copies the decrypted password.
 function copyAction() {
         var decrypted = document.getElementById("decrypted");
         decrypted.disabled = "";

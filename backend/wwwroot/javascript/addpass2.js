@@ -1,23 +1,25 @@
-function updateStatus(statusObject) {
-	var statusSpan = document.getElementById("notif_status");
-	statusSpan.innerHTML = statusObject.what + ' - ' + (statusObject.i/statusObject.total) + '...';
-}
+// Submits the challenge form
 function challengeSubmitAction(event) {
 	event.preventDefault();
 	var notification = document.getElementById("notification");
 	notification.style.color = "";
 	notification.innerHTML = "Please wait...";
 	var cForm = document.getElementById("challengeform");
-	cForm.querySelector("[name=userhash]").value = md5(cForm.querySelector("[name=userin]").value);
-	jQuery.post("addpass_challenge.php", "userhash=" + cForm.querySelector("[name=userhash]").value + "&account=" + md5(cForm.querySelector("[name=account]").value), buildVerifyForm, "text");
+	cForm.querySelector("[name=userhash]").value = md5(cForm.querySelector("[name=userin]").value.toLowerCase());
+	jQuery.post(urllocation+"addpass_challenge.php", "userhash=" + cForm.querySelector("[name=userhash]").value + "&account=" + md5(cForm.querySelector("[name=account]").value.toLowerCase()), buildVerifyForm, "text");
 }
+// Function to generate a password
 function makePassword() {
 	var text = "";
 	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!";
-	for (var i = 0; i < document.getElementById('plength').value; i++)
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	var choice = new Uint8Array(1);
+	for (var i = 0; i < document.getElementById('plength').value; i++) {
+		window.crypto.getRandomValues(choice);
+		text += possible.charAt(choice[0] >> 2);
+	}
 	return text;
 }
+// Called by challengeSubmitAction. Builds the verifyForm input
 function buildVerifyForm(data) {
 	var userpass = document.getElementById("password_input").value;
 	// Copy username
@@ -31,54 +33,47 @@ function buildVerifyForm(data) {
 		document.getElementById('notification').innerHTML = dataSplit[1];
 		return;
 	}
-	// Encrypt
+	// Decrypt Secrets
 	document.getElementById('notification').innerHTML += ' <span id="notif_text">Decrypting Secrets...</span><span id="notif_status"></span>';
-	triplesec.decrypt({
-		data: new triplesec.Buffer(dataSplit[1].substring(6), 'base64'),
-		key: new triplesec.Buffer(document.getElementById('password_input').value),
-		progress_hook: updateStatus
-	}, function (wrongkey, ecckeybuf) {
-		if (!wrongkey) {
-			document.getElementById('ecckey').value = ecckeybuf.toString('hex');
-			document.getElementById('notif_text').innerHTML = "Encrypting Password...";
-			document.getElementById('decrypted').value = makePassword();
-			// Generate and encrypt password
-			triplesec.encrypt({
-				data: new triplesec.Buffer(document.getElementById('decrypted').value),
-				key: new triplesec.Buffer(document.getElementById('password_input').value),
-				progress_hook: updateStatus
-			}, function (err, buff) {
-				if (!err) {
-					document.getElementById('encryptedpass').value = buff.toString('base64');
-					document.getElementById('notif_text').innerHTML = "Signing... ";
-					// Sign everything
-					var privateKeyHex = document.getElementById('ecckey').value;
-					var sig = new KJUR.crypto.Signature({"alg": "SHA256withECDSA"});
-					sig.init({d: privateKeyHex, curve: "secp256k1"});
-					sig.updateString(document.getElementById("challenge").value+'$'+
-						md5(document.getElementById('account_input').value)+'$'+
-						document.getElementById('encryptedpass').value);
-					var sighex = sig.sign();
-					var sigb64 = btoa(sighex.match(/\w{2}/g).map(function(a){return String.fromCharCode(parseInt(a, 16));} ).join(""));
-					document.getElementById("signature").value = sigb64;
-					verifySubmitAction();
-				} else {
-					document.getElementById('notification').style.color = "red";
-					document.getElementById('notification').innerHTML = "Encryption Error: "+err;
-				}
-			});
-		} else {
+	setTimeout(function() {
+		try {
+			var passwd = document.getElementById('password_input').value;
+			document.getElementById('ecckey').value = hex.fromBits(sjcldecrypt(b64.toBits(dataSplit[1].substring(6)), passwd));
+		} catch (err) {
 			document.getElementById('notification').style.color = "red";
 			document.getElementById('notification').innerHTML = "Incorrect Password.";
+			return;
 		}
-	});
+		// Encrypt Password
+		document.getElementById('notif_text').innerHTML = "Encrypting Password...";
+		setTimeout(function() {
+			document.getElementById('decrypted').value = makePassword();
+			document.getElementById('encryptedpass').value = b64.fromBits(sjclencrypt(str.toBits(document.getElementById('decrypted').value), passwd));
+			// Sign everything
+			document.getElementById('notif_text').innerHTML = "Signing... ";
+			setTimeout(function() {
+				var privateKeyHex = document.getElementById('ecckey').value;
+				var sig = new KJUR.crypto.Signature({"alg": "SHA256withECDSA"});
+				sig.init({d: privateKeyHex, curve: "secp256k1"});
+				sig.updateString(document.getElementById("challenge").value+'$'+
+					md5(document.getElementById('account_input').value.toLowerCase())+'$'+
+					document.getElementById('encryptedpass').value);
+				var sighex = sig.sign();
+				var sigb64 = btoa(sighex.match(/\w{2}/g).map(function(a){return String.fromCharCode(parseInt(a, 16));} ).join(""));
+				document.getElementById("signature").value = sigb64;
+				setTimeout(verifySubmitAction, 20);
+			}, 20);
+		}, 20);
+	}, 20);
 }
+// Called by buildVerifyForm. Submits the verifyForm.
 function verifySubmitAction() {
 	var vForm = document.getElementById("verifyform");
-	jQuery.post("addpass_verify.php", "userhash=" + vForm.querySelector("[name=userhash]").value +
+	jQuery.post(urllocation+"addpass_verify.php", "userhash=" + vForm.querySelector("[name=userhash]").value +
 	            "&passwordcrypt=" + vForm.querySelector("[name=passwordcrypt]").value.replace(/\+/g, '%2B') +
 	            "&signature=" + vForm.querySelector("[name=signature]").value.replace(/\+/g, '%2B'), printVerifyResult, "text");
 }
+// Prints the result of the verifyForm submission.
 function printVerifyResult(data) {
 	var notification = document.getElementById("notification");
 	notification.style.color = "red";
@@ -91,5 +86,13 @@ function printVerifyResult(data) {
 		notification.innerHTML = "Result: " + data;
 	}
 }
+// Copies the decrypted password.
 function copyAction() {
+        var decrypted = document.getElementById("decrypted");
+        decrypted.disabled = "";
+	decrypted.type = "text";
+        decrypted.select();
+        document.execCommand("copy");
+	decrypted.type = "password";
+        decrypted.disabled = "true";
 }
