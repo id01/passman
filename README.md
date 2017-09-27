@@ -43,6 +43,10 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 09/26/2017 v0.3.9 (id01)  
+	* Removed base64 library  
+	* Fixed mySQLdb "MySQL server has gone away" bug after a while  
+	* Fixed global/local variable bug with main function  
 * 09/24/2017 v0.3.8 (id01)  
 	* Removed Google CDN.  
 	* Improved webextension, including auto-copy.  

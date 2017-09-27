@@ -1,9 +1,5 @@
 import os;
 import sys;
-import base64;
-from base64 import b64encode as encode64;
-from base64 import b64decode as decode64;
-import random;
 import _mysql;
 import MySQLdb;
 import cryptography;
@@ -78,7 +74,7 @@ class connection:
 		eccpub = serialization.load_der_public_key(public_der, backend=backend);
 		try:
 			passwordcrypt = rawInput[0];
-			passwordsign = decode64(rawInput[1]);
+			passwordsign = rawInput[1].decode('base64');
 		except (AttributeError, IndexError):
 			return 1; # Invalid input
 		if not (verifyECDSA(eccpub, passwordsign, self.addsession_challenge+'$'+self.addsession_accounthash+'$'+passwordcrypt) and isBase64(passwordcrypt)):
@@ -128,21 +124,30 @@ class connection:
 
 # Main
 def main(conn):
+	global db; # Why, Python?
 	# Get command and username, initialize connection object, return if it doesn't exist
 	rawInput = conn.recv(1024).split('\n');
 	if not rawInput:
 		return;
 	command = rawInput[0];
 	userin = rawInput[1];
+	resultStr = "An unknown error occured.";
 	try:
 		connObj = connection(conn, userin);
 	except ValueError:
-		resultStr = "User doesn't exist.";
-		conn.send(resultStr+'\n');
+		resultStr = False;
+	except OperationalError:
+		# MySQL server has gone away. Refresh it and try again.
+		try:
+			db = MySQLdb.connect(user='passman', db='passwords');
+			connObj = connection(conn, userin);
+		except ValueError:
+			resultStr = False;
+	if resultStr == False:
+		conn.send("User doesn't exist.\n");
 		return;
 	# Parse commands
 	try:
-		resultStr = "An unknown error occured.";
 		if command == 'ADD':
 			account = rawInput[2];
 			result = connObj.add_password(account);
