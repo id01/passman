@@ -43,6 +43,9 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 09/26/2017 v0.3.10 (id01)  
+	* Fixed programming error with scrypt that made it derive way too many bytes.  
+	* Broke backwards compatibility.
 * 09/26/2017 v0.3.9 (id01)  
 	* Removed base64 library  
 	* Fixed mySQLdb "MySQL server has gone away" bug after a while  

@@ -3,28 +3,14 @@ var urllocation = ""; // Empty string means in the current directory.
 var hex = sjcl.codec.hex;
 var b64 = sjcl.codec.base64;
 var str = sjcl.codec.utf8String;
-/*function sjclencryptaes(plaintext, key) {
-	var salt = new Uint32Array(4); window.crypto.getRandomValues(salt);
-	var iv = new Uint32Array(4); window.crypto.getRandomValues(iv);
-	var prp = new sjcl.cipher.aes(sjcl.misc.pbkdf2(key, hex.toBits(hex.fromBits(salt)), 8192, 256));
-	var ciphertext = sjcl.mode.gcm.encrypt(prp, plaintext, iv);
-	var ciphertextall = hex.fromBits(salt)+hex.fromBits(iv)+hex.fromBits(ciphertext);
-	return hex.toBits(ciphertextall);
-}
-function sjcldecryptaes(ciphertextall, key) {
-	var salt = ciphertextall.slice(0, 4);
-	var iv = ciphertextall.slice(4, 8);
-	var ciphertext = ciphertextall.slice(8);
-	var prp = new sjcl.cipher.aes(sjcl.misc.pbkdf2(key, hex.toBits(hex.fromBits(salt)), 8192, 256));
-	var plaintext = sjcl.mode.gcm.decrypt(prp, ciphertext, iv);
-	return plaintext;
-}*/
+// Function to derive keys using sjcl
 function sjclkeydev(key, salt) {
 	var saltBits = hex.toBits(hex.fromBits(salt));
 	var pbkdf2key = sjcl.misc.pbkdf2(key, saltBits, 8192, 256);
-	var scryptkey = sjcl.misc.scrypt(key, saltBits, 8192, 8, 1, 256);
+	var scryptkey = sjcl.misc.scrypt(key, saltBits, 8192, 8, 1, 32);
 	return pbkdf2key.concat(scryptkey);
 }
+// Function to encrypt using sjcl
 function sjclencrypt(plaintext, key) {
 	// Create Values
 	var salt = new Uint32Array(4); window.crypto.getRandomValues(salt);
@@ -40,6 +26,7 @@ function sjclencrypt(plaintext, key) {
 	var ciphertextall = hex.fromBits(salt)+hex.fromBits(iv)+hex.fromBits(ciphertext);
 	return hex.toBits(ciphertextall);
 }
+// Function to decrypt using sjcl
 function sjcldecrypt(ciphertextall, key) {
 	// Import values
 	var salt = ciphertextall.slice(0, 4);
