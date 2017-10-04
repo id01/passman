@@ -29,6 +29,7 @@ Install webextension on browser.
 ### C++ Interface Installation
 Download libscrypt from [here](https://github.com/technion/libscrypt) and build it.  
 Copy libscrypt.a and libscrypt.h to desktop_interface/prototype/libscrypt.  
+Change the serverURL variable in prototype.cpp to your server URL.  
 Go to desktop_interface/prototype and run ./build.sh.  
 
 ## Features
@@ -50,6 +51,7 @@ NOTE: You can still bypass firewalls if you host the service on port 80 :)
 ## Changelog
 * 10/03/2017 v0.4.0 (id01)  
 	* Finally! After three days and countless hours of screwing around with C and C++ libraries, I have finally created my C++ interface prototype!  
+	* Note: Currently only supports GETing passwords.  
 * 09/27/2017 v0.3.11 (id01)  
 	* Fixed another programming error that caused sha256 hashes used as aes keys to be concatenated with an object (how does that even work?)  
 * 09/26/2017 v0.3.10 (id01)  
