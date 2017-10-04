@@ -21,10 +21,15 @@ Symlink a folder on your webserver to backend/wwwroot for setting up of new user
 Run ./build_wwwroot.sh to build wwwroot javascript files.  
 Add the user that will be running passwordservice to the group www-data.  
 
-### Frontend Installation
+### Webextension Installation
 Make sure server is correctly set up.  
 Generate webextension on server by executing "python create_webextension.py" and following the prompts.  
 Install webextension on browser.  
+
+### C++ Interface Installation
+Download libscrypt from [here](https://github.com/technion/libscrypt) and build it.  
+Copy libscrypt.a and libscrypt.h to desktop_interface/prototype/libscrypt.  
+Go to desktop_interface/prototype and run ./build.sh.  
 
 ## Features
 Variable symmetric and elliptic curve algorithms. (Including AES-256 and sect571k1)  
@@ -43,6 +48,10 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 10/03/2017 v0.4.0 (id01)  
+	* Finally! After three days and countless hours of screwing around with C and C++ libraries, I have finally created my C++ interface prototype!  
+* 09/27/2017 v0.3.11 (id01)  
+	* Fixed another programming error that caused sha256 hashes used as aes keys to be concatenated with an object (how does that even work?)  
 * 09/26/2017 v0.3.10 (id01)  
 	* Fixed programming error with scrypt that made it derive way too many bytes.  
 	* Broke backwards compatibility.
@@ -141,12 +150,17 @@ NOTE: You can still bypass firewalls if you host the service on port 80 :)
 * jQuery (MIT license)  
 * sjcl (BSD 2.0 license)  
 * sjcl-scrypt (BSD 2.0 license, by joe-invincible)  
+* libscrypt (Other license)  
 * Python, WebExtensions, Javascript, PHP, HTML, C, Shell and every other programming language I used :)  
 Also, special thanks to my PC, router, Raspberry Pi, and web browser for making this possible :D Lol  
-Note: Licenses for software used can be found in licenses/
+Note: Licenses for software used can be found in licenses/  
 
 ## Dependencies
 * Python 2.x  
 * Python cryptography library (server only)  
 * MySQL (server only)  
 * An http server (server only)  
+* openssl (c++ interface only, if server is HTTPS)  
+* libcurl (c++ interface only)  
+* cryptopp (c++ interface only)  
+* lpthread (c++ interface only)  

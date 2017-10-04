@@ -17,10 +17,10 @@ function sjclencrypt(plaintext, key) {
 	var iv = new Uint32Array(4); window.crypto.getRandomValues(iv);
 	var derived_key = sjclkeydev(key, salt);
 	// AES Encryption
-	var prp = new sjcl.cipher.aes(sjcl.hash.sha256.hash(derived_key.concat(new Uint32Array([0]))));
+	var prp = new sjcl.cipher.aes(sjcl.hash.sha256.hash(derived_key.concat(0)));
 	var ciphertextaes = sjcl.mode.gcm.encrypt(prp, plaintext, iv);
 	// Salsa20 Encryption
-	var salsa = new sjcl.cipher.salsa20(sjcl.hash.sha256.hash(derived_key.concat(new Uint32Array([~0]))), iv.slice(1, 3));
+	var salsa = new sjcl.cipher.salsa20(sjcl.hash.sha256.hash(derived_key.concat(~0)), iv.slice(1, 3));
 	var ciphertext = salsa.encrypt(ciphertextaes);
 	// Concatenate all
 	var ciphertextall = hex.fromBits(salt)+hex.fromBits(iv)+hex.fromBits(ciphertext);
@@ -34,10 +34,10 @@ function sjcldecrypt(ciphertextall, key) {
 	var ciphertext = ciphertextall.slice(8);
 	var derived_key = sjclkeydev(key, salt);
 	// Salsa20 Decryption
-	var salsa = new sjcl.cipher.salsa20(sjcl.hash.sha256.hash(derived_key.concat(new Uint32Array([~0]))), iv.slice(1, 3));
+	var salsa = new sjcl.cipher.salsa20(sjcl.hash.sha256.hash(derived_key.concat(~0)), iv.slice(1, 3));
 	var ciphertextaes = salsa.decrypt(ciphertext);
 	// AES Decryption
-	var prp = new sjcl.cipher.aes(sjcl.hash.sha256.hash(derived_key.concat(new Uint32Array([0]))));
+	var prp = new sjcl.cipher.aes(sjcl.hash.sha256.hash(derived_key.concat(0)));
 	var plaintext = sjcl.mode.gcm.decrypt(prp, ciphertextaes, iv);
 	return plaintext;
 }
