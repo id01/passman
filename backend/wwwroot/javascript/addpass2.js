@@ -38,7 +38,7 @@ function buildVerifyForm(data) {
 	setTimeout(function() {
 		try {
 			var passwd = document.getElementById('password_input').value;
-			document.getElementById('ecckey').value = hex.fromBits(sjcldecrypt(b64.toBits(dataSplit[1].substring(6)), passwd));
+			document.getElementById('ecckey').value = b64.fromBits(sjcldecrypt(b64.toBits(dataSplit[1].substring(6)), passwd));
 		} catch (err) {
 			document.getElementById('notification').style.color = "red";
 			document.getElementById('notification').innerHTML = "Incorrect Password.";
@@ -52,13 +52,14 @@ function buildVerifyForm(data) {
 			// Sign everything
 			document.getElementById('notif_text').innerHTML = "Signing... ";
 			setTimeout(function() {
-				var privateKeyHex = document.getElementById('ecckey').value;
+				var prvKeyB64 = document.getElementById('ecckey').value;
 				var sig = new KJUR.crypto.Signature({"alg": "SHA256withECDSA"});
-				sig.init({d: privateKeyHex, curve: "secp256k1"});
+				sig.init('-----BEGIN PRIVATE KEY-----'+prvKeyB64+'-----END PRIVATE KEY-----');
 				sig.updateString(document.getElementById("challenge").value+'$'+
 					md5(document.getElementById('account_input').value.toLowerCase())+'$'+
 					document.getElementById('encryptedpass').value);
-				var sighex = sig.sign();
+				var sighexder = sig.sign();
+				var sighex = KJUR.crypto.ECDSA.asn1SigToConcatSig(sighexder);
 				var sigb64 = btoa(sighex.match(/\w{2}/g).map(function(a){return String.fromCharCode(parseInt(a, 16));} ).join(""));
 				document.getElementById("signature").value = sigb64;
 				setTimeout(verifySubmitAction, 20);

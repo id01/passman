@@ -3,6 +3,7 @@
 webextension
 backend/wwwroot/bootstrap/bootstrap.js
 backend/wwwroot/javascript/*.min.js
+backend/ecdsalib.so
 desktop_interface/testenc.txz
 desktop_interface/prototype/libscrypt/*
 desktop_interface/prototype/prototype.o

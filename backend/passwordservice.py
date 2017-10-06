@@ -2,18 +2,13 @@ import os;
 import sys;
 import _mysql;
 import MySQLdb;
-import cryptography;
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes;
-from cryptography.hazmat.backends import default_backend;
-from cryptography.hazmat.primitives import hashes;
-from cryptography.hazmat.primitives.asymmetric import ec;
-from cryptography.hazmat.primitives import serialization;
+import ecdsalib;
+from ecdsalib import verifyECDSA;
 import hashlib;
 import SocketServer;
 import socket;
 import traceback;
 import string; string_b64digits = string.digits+string.uppercase+string.lowercase+"+/=";
-backend = default_backend();
 
 # Connect to mysql server
 try:
@@ -22,15 +17,6 @@ try:
 except _mysql_exceptions.OperationalError:
 	print "Something went wrong with contacting the database... Did you run setup.sh?"
 	exit(1);
-
-# Returns true if ecdsa signature is valid, false if otherwise
-def verifyECDSA(public_key, signature, toverify):
-	verifier = public_key.verifier(signature, ec.ECDSA(hashes.SHA256()));
-	verifier.update(toverify);
-	try:
-		return verifier.verify();
-	except cryptography.exceptions.InvalidSignature:
-		return False;
 
 # Check if string is base64
 def isBase64(s):
@@ -71,13 +57,12 @@ class connection:
 	def add_password_2(self, rawInput):
 		# Get signature.
 		public_der = self.public_der_hex.decode('base64');
-		eccpub = serialization.load_der_public_key(public_der, backend=backend);
 		try:
 			passwordcrypt = rawInput[0];
 			passwordsign = rawInput[1].decode('base64');
 		except (AttributeError, IndexError):
 			return 1; # Invalid input
-		if not (verifyECDSA(eccpub, passwordsign, self.addsession_challenge+'$'+self.addsession_accounthash+'$'+passwordcrypt) and isBase64(passwordcrypt)):
+		if not (verifyECDSA(self.addsession_challenge+'$'+self.addsession_accounthash+'$'+passwordcrypt, passwordsign, public_der) and isBase64(passwordcrypt)):
 			return 2; # Wrong signature or invalid password
 		# Insert into database
 		try:

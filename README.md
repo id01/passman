@@ -49,6 +49,9 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 10/05/2017 v0.4.1 (id01)  
+	* Completely overhauled signature mechanism. Now uses (r,s) concat signatures.  
+	* No longer uses Python cryptography library for signatures, instead using a wrapper around CryptoPP.  
 * 10/03/2017 v0.4.0 (id01)  
 	* Finally! After three days and countless hours of screwing around with C and C++ libraries, I have finally created my C++ interface prototype!  
 	* Note: Currently only supports GETing passwords.  
@@ -158,11 +161,12 @@ Also, special thanks to my PC, router, Raspberry Pi, and web browser for making 
 Note: Licenses for software used can be found in licenses/  
 
 ## Dependencies
-* Python 2.x  
-* Python cryptography library (server only)  
+* Note: None of these dependencies apply to the chrome extension.  
+* CryptoPP (both server and c++ interface)  
+* Python 2.x (server only)  
+* Python 2.x C++ module development files (server only)  
 * MySQL (server only)  
 * An http server (server only)  
-* openssl (c++ interface only, if server is HTTPS)  
+* openssl (c++ interface only)  
 * libcurl (c++ interface only)  
-* cryptopp (c++ interface only)  
 * lpthread (c++ interface only)  

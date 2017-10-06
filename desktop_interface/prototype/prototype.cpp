@@ -22,13 +22,6 @@ typedef unsigned char byte;
 const char serverURL[] = "http://localhost/passmantest/"; // Must end with slash
 const char shellString[] = "passman > "; // Shell string
 
-// Wipes a pointer without freeing it
-void wipeNoFree(byte* buf, size_t buflen) {
-	for (size_t i=0; i<buflen; i++) {
-		buf[i] = rand()%256;
-	}
-}
-
 // Gets an MD5 hash in std::string hex format
 std::string md5hex(const char* plaintext, size_t plaintext_len) {
 	// Get hash

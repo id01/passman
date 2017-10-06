@@ -18,7 +18,8 @@ function generateSubmitForm() {
 		document.getElementById('public').value = b64.fromBits(hex.toBits(new KJUR.asn1.x509.SubjectPublicKeyInfo(ec).getEncodedHex()));
 		// Encrypt private key
 		document.getElementById('status').style.display = "block";
-		document.getElementById('encryptedprivate').value = b64.fromBits(sjclencrypt(hex.toBits(keypair.ecprvhex), password));
+		var prvKeyB64 = KEYUTIL.getPEM(ec, "PKCS8PRV").replace('-----BEGIN PRIVATE KEY-----', '').replace('-----END PRIVATE KEY-----', '').replace(/\n/g, '').trim();
+		document.getElementById('encryptedprivate').value = b64.fromBits(sjclencrypt(b64.toBits(prvKeyB64), password));
 		document.getElementById('serverauth').value = document.getElementById('auth').value;
 		document.getElementById('submitform').submit();
 	}, 20);
