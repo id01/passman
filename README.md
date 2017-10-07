@@ -49,6 +49,8 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 10/06/2017 v0.4.2 (id01)  
+	* Added ADD functionality to c++ interface.  
 * 10/05/2017 v0.4.1 (id01)  
 	* Completely overhauled signature mechanism. Now uses (r,s) concat signatures.  
 	* No longer uses Python cryptography library for signatures, instead using a wrapper around CryptoPP.  

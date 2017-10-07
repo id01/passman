@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Building ecdsalib..."
-g++ ecdsalib.cpp -shared -o ecdsalib.so -fPIC -lcryptopp -lpython2.7
+g++ ecdsalib.cpp -shared -O2 -o ecdsalib.so -fPIC -lcryptopp -lpython2.7
 
 echo "Doing MySQL Setup..."
 

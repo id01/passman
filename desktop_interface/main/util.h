@@ -9,7 +9,7 @@
 #include <cryptopp/gcm.h>
 #include <cryptopp/filters.h>
 
-#include "libscrypt/libscrypt.h"
+#include "../libscrypt/libscrypt.h"
 
 #define _UTIL_H
 
