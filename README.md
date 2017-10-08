@@ -17,12 +17,6 @@ Replace the string specified in backend/wwwroot/setup.php with the sha256 hash o
 Symlink backend/wwwroot to a folder in your webserver wwwroot.  
 Add the user that will be running passwordservice to the group www-data. (Don't run as www-data though)  
 
-### C++ Interface Installation
-Download libscrypt from [here](https://github.com/technion/libscrypt) and build it.  
-Copy libscrypt.a and libscrypt.h to desktop_interface/prototype/libscrypt.  
-Change the serverURL variable in prototype.cpp to your server URL.  
-Go to desktop_interface/prototype and run ./build.sh.  
-
 ## Features
 Double encryption using AES-256 and Salsa20.  
 Master Key and passwords never transmitted over internet.  
@@ -155,12 +149,9 @@ Also, special thanks to my PC, router, Raspberry Pi, and web browser for making 
 Note: Licenses for software used can be found in licenses/  
 
 ## Dependencies
-* Note: None of these dependencies apply to the chrome extension.  
-* CryptoPP (both server and c++ interface)  
-* Python 2.x (server only)  
-* Python 2.x C++ module development files (server only)  
-* MySQL (server only)  
-* An http server (server only)  
-* openssl (c++ interface only)  
-* libcurl (c++ interface only)  
-* lpthread (c++ interface only)  
+* Note: These are only the server dependencies.  
+* CryptoPP  
+* Python 2.x  
+* Python 2.x development files  
+* MySQL  
+* An http server  
