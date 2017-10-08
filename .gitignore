@@ -1,10 +1,10 @@
 *.pyc
 *.log
-webextension
+*.o
+*.so
+webextension/webextension
 backend/wwwroot/bootstrap/bootstrap.js
 backend/wwwroot/javascript/*.min.js
-backend/ecdsalib.so
 backend/mysql_setup_done
-desktop_interface/libscrypt
-desktop_interface/linux_cli/cli
-desktop_interface/main/main.o
+linux_cli/libscrypt
+linux_cli/linux_cli/cli

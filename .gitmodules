@@ -1,0 +1,6 @@
+[submodule "linux_cli"]
+	path = linux_cli
+	url = https://github.com/id01/passman-linux-cli
+[submodule "webextension"]
+	path = webextension
+	url = https://github.com/id01/passman-webextension
