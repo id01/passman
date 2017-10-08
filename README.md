@@ -48,6 +48,8 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 NOTE: You can still bypass firewalls if you host the service on port 80 :)  
 
 ## Changelog
+* 10/07/2017 v0.4.3 (id01)  
+	* UI changes! Finally!  
 * 10/06/2017 v0.4.2 (id01)  
 	* Added ADD functionality to c++ interface.  
 * 10/05/2017 v0.4.1 (id01)  
