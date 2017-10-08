@@ -1,15 +1,12 @@
 ## Password Manager
-Note: I haven't come up with a good name yet.  
-Another note: This only works on Linux as of the moment. However, it shouldn't be too hard to port the client.  
-A third note: I really need to make a good UI for the webextension... Help would be appreciated :)  
+Main module, containing server code.
 
 ## Description
 This is a (no longer so) simple password manager that runs on mySQL.  
-Its primary feature is that the server knows a minimal amount of data about the user (IP is logged, though).  
+Its primary feature is that the server knows a minimal amount of data about the user.  
 Account names and usernames are hashed, and passwords are encrypted.  
 Passwords can be gotten through an HTTP service.  
 Note: It's probably a good idea to put HTTP authentication on backend/wwwroot/setup.php.  
-Another Note: Listens over port 3000  
 
 ## Installation
 ### Backend Installation
@@ -20,11 +17,6 @@ Replace the string specified in backend/wwwroot/setup.php with the sha256 hash o
 Symlink backend/wwwroot to a folder in your webserver wwwroot.  
 Add the user that will be running passwordservice to the group www-data. (Don't run as www-data though)  
 
-### Webextension Installation
-Make sure server is correctly set up.  
-Generate webextension on server by executing "python create_webextension.py" and following the prompts.  
-Install webextension on browser.  
-
 ### C++ Interface Installation
 Download libscrypt from [here](https://github.com/technion/libscrypt) and build it.  
 Copy libscrypt.a and libscrypt.h to desktop_interface/prototype/libscrypt.  
@@ -32,10 +24,10 @@ Change the serverURL variable in prototype.cpp to your server URL.
 Go to desktop_interface/prototype and run ./build.sh.  
 
 ## Features
-Variable symmetric and elliptic curve algorithms. (Including AES-256 and sect571k1)  
-Master Key and passwords never transmitted over internet except initial registration over webUI.  
-Server has zero knowledge of any passwords or master key, except initial registration over webUI.  
-Passwords stored on server encrypted with AES and generated at client side after secure elliptic-curve handshake.  
+Double encryption using AES-256 and Salsa20.  
+Master Key and passwords never transmitted over internet.  
+Server has zero knowledge of any passwords or master key or private key.  
+Passwords stored on server encrypted with AES and Salsa20, generated at client side after secure elliptic-curve handshake.  
 Centralized password management without need for copying any files.  
 
 ## Other Notes
@@ -43,11 +35,10 @@ ALWAYS run the registration web server over SSL. Otherwise, the world (and all y
 Just kidding! But seriously. Don't run the webserver over plaintext. It's not good for your health.  
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
-## Todo
-100% HTTP/HTTPS (giving up due to lack of a good standard Javascript implementation of ecdsa)  
-NOTE: You can still bypass firewalls if you host the service on port 80 :)  
-
 ## Changelog
+* 10/07/2017 v0.5.0 (id01)  
+	* Submodules!  
+	* Note: This is now only the README for the backend.  
 * 10/07/2017 v0.4.3 (id01)  
 	* UI changes! Finally!  
 * 10/06/2017 v0.4.2 (id01)  
