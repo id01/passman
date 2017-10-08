@@ -1,0 +1,107 @@
+html, body {
+	overflow: hidden;
+}
+
+body {
+	background-color: #333333;
+}
+
+/* This governs the form input div */
+#inputdiv {
+	position: absolute;
+	top: 2cm;
+	left: calc(50% - 7.5cm);
+	width: 15cm;
+	text-align: center;
+}
+
+
+/* This governs the notification div */
+.notification, .notification_success, .notification_failure {
+	height: 1.6cm;
+	font-size: 1cm;
+}
+.notification {
+	color: #bbbbbb;
+}
+.notification_success {
+	color: #44bb66;
+}
+.notification_failure {
+	color: #aa5544
+}
+
+/* This governs individual form inputs */
+.forminput {
+	display: inline-block;
+	color: #ffffff;
+	background-color: #444444;
+	height: 1.6cm;
+	width: 12cm;
+	border-radius: 12px;
+	font-size: 1cm;
+	opacity: 0.8;
+	text-align: center;
+	border: none;
+}
+.forminput:hover {
+	opacity: 1;
+}
+.forminput:focus {
+	opacity: 1;
+}
+#submitbutton {
+	margin-top: 12px;
+}
+
+/* This governs the form output */
+@keyframes flyinfadein {
+	to {top: 80%; opacity: 0.8;}
+}
+#resultdiv {
+	position: absolute;
+	display: table;
+	color: #ffffff;
+	height: 1.6cm;
+	width: 13cm;
+	font-size: 1cm;
+	text-align: center;
+	top: 100%;
+	left: calc(50% - 6.5cm);
+	opacity: 0;
+}
+.resultdiv_visible {
+	animation: flyinfadein 2s forwards;
+}
+
+/* This governs the parts of the output form */
+#decrypted, #copybutton {
+	color: #ffffff;
+	background-color: #444444;
+	height: 1.6cm;
+	margin: 0;
+	display: table-cell;
+	border: none;
+	opacity: 0.8;
+}
+#decrypted {
+	font-size: 0.8cm;
+	width: 8cm;
+	border-top-left-radius: 12px;
+	border-bottom-left-radius: 12px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+#copybutton {
+	font-size: 0.8cm;
+	border-left: 1px solid;
+	border-image: linear-gradient(to bottom, transparent, white, transparent) 10;
+	width: 4cm;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-top-right-radius: 12px;
+	border-bottom-right-radius: 12px;
+}
+#copybutton:hover {
+	opacity: 1;
+}

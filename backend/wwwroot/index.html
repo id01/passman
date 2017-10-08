@@ -1,10 +1,22 @@
 <html>
+<head>
+<script src="bootstrap/bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
 <body>
-<div id="formcontainer">
-<h2>Password Manager</h2>
-<a href="getpass.html">Get a password</a><br/>
-<a href="addpass.html">Add a password</a><br/>
-<a href="setup.html">Create an account</a><br/>
+<script>
+async function changeFloatForm(a){
+	$("#floatform").fadeOut(400,"swing",function(){
+		document.getElementById('floatform').src=a;
+		$("#floatform").fadeIn(400,"swing");
+	});
+}
+</script>
+<div id="navbar">
+<span class="header" id="getheader"><a class="ha" href="javascript:changeFloatForm('getpass.html')">Get Password</a></span>
+<span class="header" id="addheader"><a class="ha" href="javascript:changeFloatForm('addpass.html')">Add Password</a></span>
 </div>
-</body>
+<iframe id="floatform" src="getpass.html">
+</iframe>
+<div id="setuplink"><a href="setup.html">Create an account</a></div></body>
 </html>

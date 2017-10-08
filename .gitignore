@@ -4,8 +4,7 @@ webextension
 backend/wwwroot/bootstrap/bootstrap.js
 backend/wwwroot/javascript/*.min.js
 backend/ecdsalib.so
-desktop_interface/testenc.txz
-desktop_interface/prototype/libscrypt/*
-desktop_interface/prototype/prototype.o
-desktop_interface/prototype/prototype
-
+backend/mysql_setup_done
+desktop_interface/libscrypt
+desktop_interface/linux_cli/cli
+desktop_interface/main/main.o

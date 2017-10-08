@@ -2,7 +2,7 @@
 function challengeSubmitAction(event) {
 	event.preventDefault();
 	var notification = document.getElementById("notification");
-	notification.style.color = "";
+	notification.className = "notification";
 	notification.innerHTML = "Please wait...";
 	var cForm = document.getElementById("challengeform");
 	cForm.querySelector("[name=userhash]").value = md5(cForm.querySelector("[name=userin]").value.toLowerCase());
@@ -29,7 +29,7 @@ function buildVerifyForm(data) {
 	document.getElementById("challenge").value = dataSplit[0];
 	// Check if error occured
 	if (!dataSplit[1].startsWith("VALID")) {
-		document.getElementById('notification').style.color = "red";
+		document.getElementById('notification').className = "notification_failure";
 		document.getElementById('notification').innerHTML = dataSplit[1];
 		return;
 	}
@@ -40,7 +40,7 @@ function buildVerifyForm(data) {
 			var passwd = document.getElementById('password_input').value;
 			document.getElementById('ecckey').value = b64.fromBits(sjcldecrypt(b64.toBits(dataSplit[1].substring(6)), passwd));
 		} catch (err) {
-			document.getElementById('notification').style.color = "red";
+			document.getElementById('notification').className = "notification_failure";
 			document.getElementById('notification').innerHTML = "Incorrect Password.";
 			return;
 		}
@@ -77,27 +77,17 @@ function verifySubmitAction() {
 // Prints the result of the verifyForm submission.
 function printVerifyResult(data) {
 	var notification = document.getElementById("notification");
-	notification.style.color = "red";
+	notification.className = "notification_failure";
 	if (data.startsWith("Password already exists!") || data.startsWith("Invalid Signature")) {
 		notification.innerHTML = "Result: " + data;
 	} else if (data == "") {
 		notification.innerHTML = "Unknown Error.";
 	} else {
-		notification.style.color = "green";
+		document.getElementById("resultdiv").className = "resultdiv_visible";
+		notification.className = "notification_success";
 		notification.innerHTML = "Result: " + data;
 		if (document.location.search == "?extension" && data == "Success!") {
-			notification.innerHTML = "Password copied to clipboard.";
 			copyAction();
 		}
 	}
-}
-// Copies the decrypted password.
-function copyAction() {
-        var decrypted = document.getElementById("decrypted");
-        decrypted.disabled = "";
-	decrypted.type = "text";
-        decrypted.select();
-        document.execCommand("copy");
-	decrypted.type = "password";
-        decrypted.disabled = "true";
 }

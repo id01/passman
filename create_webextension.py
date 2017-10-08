@@ -31,6 +31,7 @@ with open(EXTROOT+"/javascript/global.min.js", 'w') as globalFile:
 www2ext("getpass.html");
 www2ext("addpass.html");
 os.system("cp webextension_template/* webextension/");
+os.system("cp -r webextension_template/css webextension/wwwroot/");
 with open("webextension/manifest.json", 'r') as manifestFile:
 	manifestFileContent = manifestFile.read().replace('_URLLOCATION_', '"'+URLLOCATION+'"');
 with open("webextension/manifest.json", 'w') as manifestFile:

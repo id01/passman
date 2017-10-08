@@ -2,7 +2,7 @@
 function submitAction(event) {
 	event.preventDefault();
 	var notification = document.getElementById("notification");
-	notification.style.color = "";
+	notification.className = "notification";
 	notification.innerHTML = "Please wait...";
 	var getForm = document.getElementById("getform");
 	var userhash = md5(getForm.querySelector("[name=userin]").value.toLowerCase());
@@ -21,31 +21,21 @@ function updateEncrypted(data) {
 		var encPassword = encdata.substring(6);
 		try {
 			document.getElementById("decrypted").value = str.fromBits(sjcldecrypt(b64.toBits(encPassword), passwd));
-			notification.style.color = "green";
+			document.getElementById("resultdiv").className = "resultdiv_visible";
+			notification.className = "notification_success";
 			notification.innerHTML = "Done.";
 			if (document.location.search == "?extension") {
-				notification.innerHTML = "Password copied to clipboard.";
 				copyAction();
 			}
 		} catch (err) {
-			document.getElementById('notification').style.color = "red";
+			document.getElementById('notification').className = "notification_failure";
 			document.getElementById('notification').innerHTML = "Incorrect Password.";
 			return;
 		}
 	}
 	else
 	{
-		notification.style.color = "red";
+		notification.className = "notification_failure";
 		notification.innerHTML = "Error getting entry: "+encdata;
 	}
-}
-// Copies the decrypted password.
-function copyAction() {
-        var decrypted = document.getElementById("decrypted");
-        decrypted.disabled = "";
-	decrypted.type = "text";
-        decrypted.select();
-        document.execCommand("copy");
-	decrypted.type = "password";
-        decrypted.disabled = "true";
 }

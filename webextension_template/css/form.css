@@ -1,0 +1,10 @@
+/* This governs the notification div */
+.notification {
+	color: black;
+}
+.notification_success {
+	color: green;
+}
+.notification_failure {
+	color: red;
+}

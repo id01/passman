@@ -1,20 +1,23 @@
 <html>
 <head>
 <script src="bootstrap/bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="css/form.css">
 </head>
 <body>
 <script src="javascript/global.min.js"></script>
 <script src="javascript/getpass2.min.js"></script>
+<div id="inputdiv">
+<div id="notification" class="notification" align="center">Please Login.</div>
 <form id="getform" method="post" action="javascript:void(0);">
-<div id="notification">Please Login.</div>
-Username: <input type="text" name="userin"><br/>
-Password: <input type="password" id="password_input"><br/>
-Account Name: <input type="text" name="account"><br/>
-<input type="submit" value="Get Password">
+<p><input type="text" class="forminput" name="userin" placeholder="Username"></p>
+<p><input type="password" class="forminput" id="password_input" placeholder="Password"></p>
+<p><input type="text" class="forminput" name="account" placeholder="Account Name"></p>
+<input id="submitbutton" class="forminput" type="submit" value="Get Password >">
 </form>
+</div>
 <div id="resultdiv">
 Account Password: <input id="decrypted" type="password" disabled="true">
-<button id="copybutton" type="button">Copy</button>
+<button id="copybutton" type="button">Copy ></button>
 </div>
 <script src="javascript/getpassHandlers.js"></script>
 </body>

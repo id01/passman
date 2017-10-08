@@ -1,19 +1,23 @@
 <html>
 <head>
 <script src="bootstrap/bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="css/form.css">
+<style>#plength::-webkit-inner-spin-button {-webkit-appearance:none; margin:0;}</style>
 </head>
 <body>
 <script src="javascript/global.min.js"></script>
 <script src="javascript/addpass2.min.js"></script>
+<div id="inputdiv">
+<div id="notification" class="notification" align="center">Please Login.</div>
 <form id="challengeform" action="javascript:void(0);">
-<div id="notification">Please Login.</div>
-Username: <input type="text" name="userin"><br/>
-Password: <input type="password" id="password_input"><br/>
-Account Name: <input type="text" name="account" id="account_input"><br/>
-Password Length: <input type="number" id="plength" min="8" max="80" value="15"><br/>
+<p><input type="text" class="forminput" name="userin" placeholder="Username"></p>
+<p><input type="password" class="forminput" id="password_input" placeholder="Password"></p>
+<p><input type="text" class="forminput" name="account" id="account_input" placeholder="Account Name"></p>
+<p><input type="number" class="forminput" id="plength" min="8" max="80" placeholder="Password Length (15)"></p>
 <span style="display:none"><input type="text" name="userhash"></span>
-<input type="submit" value="Add Password">
+<input id="submitbutton" type="submit" class="forminput" value="Add Password >">
 </form>
+</div>
 <div id="resultdiv">
 Account Password: <input id="decrypted" type="password" disabled="true">
 <button id="copybutton" type="button">Copy</button>

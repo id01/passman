@@ -41,3 +41,16 @@ function sjcldecrypt(ciphertextall, key) {
 	var plaintext = sjcl.mode.gcm.decrypt(prp, ciphertextaes, iv);
 	return plaintext;
 }
+
+// Copies the decrypted password.
+function copyAction() {
+        var decrypted = document.getElementById("decrypted");
+        decrypted.disabled = "";
+	decrypted.type = "text";
+        decrypted.select();
+        document.execCommand("copy");
+	decrypted.type = "password";
+        decrypted.disabled = "true";
+	document.getElementById('notification').className = "notification_success";
+	document.getElementById('notification').innerHTML = "Password copied to clipboard.";
+}

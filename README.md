@@ -14,12 +14,11 @@ Another Note: Listens over port 3000
 ## Installation
 ### Backend Installation
 Install dependencies.  
-Run ./setup.sh  
+Go to backend/ and run make.  
 Run python passwordservice.py to run the service.  
 Replace the string specified in backend/wwwroot/setup.php with the sha256 hash of the signup password.  
-Symlink a folder on your webserver to backend/wwwroot for setting up of new users from the internet.  
-Run ./build_wwwroot.sh to build wwwroot javascript files.  
-Add the user that will be running passwordservice to the group www-data.  
+Symlink backend/wwwroot to a folder in your webserver wwwroot.  
+Add the user that will be running passwordservice to the group www-data. (Don't run as www-data though)  
 
 ### Webextension Installation
 Make sure server is correctly set up.  
