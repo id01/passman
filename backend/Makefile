@@ -23,14 +23,13 @@ $(JSDIR)/global.min.js: $(JSDIR)/global.js
 	# Building global.min.js...
 	uglifyjs $(JSDIR)/global.js --mangle sort,eval --compress dead_code=true > $(JSDIR)/global.min.js
 
-$(BSDIR)/bootstrap.js: $(BSDIR)/newline $(BSDIR)/jquery.min.js $(BSDIR)/jsrsasign.js $(BSDIR)/md5.js $(BSDIR)/sjcl1.js $(BSDIR)/sjcl2.js $(BSDIR)/sjcl_combine.js $(BSDIR)/sjcl-scrypt.min.js
+$(BSDIR)/bootstrap.js: $(BSDIR)/newline $(BSDIR)/jquery.min.js $(BSDIR)/jsrsasign.js $(BSDIR)/md5.js $(BSDIR)/sjcl1.js $(BSDIR)/sjcl2.js $(BSDIR)/sjcl_combine.js
 	# Building bootstrap.js...
 	cat $(BSDIR)/jquery.min.js $(BSDIR)/newline > /tmp/bootstrap_large.js
 	cat $(BSDIR)/jsrsasign.js $(BSDIR)/newline >> /tmp/bootstrap_large.js
 	cat $(BSDIR)/md5.js $(BSDIR)/newline >> /tmp/bootstrap_large.js
 	cat $(BSDIR)/sjcl1.js $(BSDIR)/newline $(BSDIR)/sjcl2.js $(BSDIR)/newline >> /tmp/bootstrap_large.js
 	cat $(BSDIR)/sjcl_combine.js $(BSDIR)/newline >> /tmp/bootstrap_large.js
-	cat $(BSDIR)/sjcl-scrypt.min.js >> /tmp/bootstrap_large.js
 	uglifyjs /tmp/bootstrap_large.js > $(BSDIR)/bootstrap.js
 	rm /tmp/bootstrap_large.js
 

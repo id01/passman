@@ -30,6 +30,10 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
+* 10/09/2017 v0.5.1 (id01)  
+	* Using 16384 iterations of Scrypt instead of 8192 iterations of Scrypt and 8192 of PBKDF2 and hashing them together.  
+	* Switched to Scrypt in SJCL-Master - I just found out they had that included. And it uses bits intead of bytes.  
+	* Updated Scrypt library to scrypt-jane.  
 * 10/07/2017 v0.5.0 (id01)  
 	* Submodules!  
 	* Note: This is now only the README for the backend.  
@@ -142,8 +146,6 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 * JavaScript-MD5 (MIT license)  
 * jQuery (MIT license)  
 * sjcl (BSD 2.0 license)  
-* sjcl-scrypt (BSD 2.0 license, by joe-invincible)  
-* libscrypt (Other license)  
 * Python, WebExtensions, Javascript, PHP, HTML, C, Shell and every other programming language I used :)  
 Also, special thanks to my PC, router, Raspberry Pi, and web browser for making this possible :D Lol  
 Note: Licenses for software used can be found in licenses/  

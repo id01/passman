@@ -6,9 +6,7 @@ var str = sjcl.codec.utf8String;
 // Function to derive keys using sjcl
 function sjclkeydev(key, salt) {
 	var saltBits = hex.toBits(hex.fromBits(salt));
-	var pbkdf2key = sjcl.misc.pbkdf2(key, saltBits, 8192, 256);
-	var scryptkey = sjcl.misc.scrypt(key, saltBits, 8192, 8, 1, 32);
-	return pbkdf2key.concat(scryptkey);
+	return sjcl.misc.scrypt(key, saltBits, 16384, 8, 1, 512);
 }
 // Function to encrypt using sjcl
 function sjclencrypt(plaintext, key) {
