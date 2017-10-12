@@ -30,6 +30,13 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
+* 10/11/2017 v0.6.0 (id01)
+	* Windows Form GUI done!  
+	* Switched scrypt library to scrypt-jane, which seems better.  
+	* Moved code in setup.py into passwordservice.py; should solve the new user not exists problem.  
+	* Fixed critical security problem in which passwords would be parts of the malloc()ed RAM. I forgot to urandom(). Oops.  
+	* Made some minor improvements to linux_gui.  
+	* Sorry for those strange commits. Git was going weird on me.  
 * 10/09/2017 v0.5.1 (id01)  
 	* Using 16384 iterations of Scrypt instead of 8192 iterations of Scrypt and 8192 of PBKDF2 and hashing them together.  
 	* Switched to Scrypt in SJCL-Master - I just found out they had that included. And it uses bits intead of bytes.  

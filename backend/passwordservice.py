@@ -1,6 +1,7 @@
 import os;
 import sys;
-import _mysql;
+import time;
+import _mysql_exceptions;
 import MySQLdb;
 import ecdsalib;
 from ecdsalib import verifyECDSA;
@@ -107,6 +108,38 @@ class connection:
 		# This has been gotten during init
 		return self.public_der_hex;
 
+	# Function to set up an account
+	def setup(self, userhash, eccpubs, eccencs):
+		if not (isHex(userhash) and isBase64(eccpubs) and isBase64(eccencs)):
+			return "Username or ECC key is not correctly encoded. Please try again.";
+		else:
+			try:
+				dbc.execute("select public from cryptokeys where userhash=%s", (userhash,));
+				dbc.fetchone()[0];
+				print "User already exists!";
+				exit(1);
+			except (IndexError, TypeError):
+				dbc.execute("insert into cryptokeys (userhash, public, private) values (%s, %s, %s)", (userhash, eccpubs, eccencs));
+				db.commit();
+		return "Success!";
+
+# Class for a setup connection
+def setupAccount(userhash, eccpubs, eccencs):
+	# Initialization
+	if not (isHex(userhash) and isBase64(eccpubs) and isBase64(eccencs)):
+		return "Username or ECC key is not correctly encoded. Please try again.";
+	# Initalize Variables
+	dbc = db.cursor(); # Cursor on database connection
+	# Get user ECC key to see if it exists
+	try:
+		dbc.execute("select public from cryptokeys where userhash=%s", (userhash,));
+		dbc.fetchone()[0];
+		return "User already exists!";
+	except (IndexError, TypeError):
+		dbc.execute("insert into cryptokeys (userhash, public, private) values (%s, %s, %s)", (userhash, eccpubs, eccencs));
+		db.commit();
+	return "Success!";
+
 # Main
 def main(conn):
 	global db; # Why, Python?
@@ -121,7 +154,7 @@ def main(conn):
 		connObj = connection(conn, userin);
 	except ValueError:
 		resultStr = False;
-	except OperationalError:
+	except _mysql_exceptions.OperationalError:
 		# MySQL server has gone away. Refresh it and try again.
 		try:
 			db = MySQLdb.connect(user='passman', db='passwords');
@@ -129,7 +162,13 @@ def main(conn):
 		except ValueError:
 			resultStr = False;
 	if resultStr == False:
-		conn.send("User doesn't exist.\n");
+		if command != 'SETUP':
+			conn.send("User doesn't exist.\n");
+		elif len(rawInput) <= 3:
+			conn.send("Malformed request.\n");
+		else:
+			sys.stderr.write("New account: %s\n" % userin);
+			conn.send(setupAccount(userin, rawInput[2], rawInput[3])+'\n');
 		return;
 	# Parse commands
 	try:
@@ -177,6 +216,8 @@ def main(conn):
 				resultStr = "Entry doesn't exist";
 			else:
 				resultStr = "VALID " + eccpub;
+		elif command == 'SETUP':
+			resultStr = "User already exists!"; # If the user didn't exist, it would have been set up earlier in the code
 		else:
 			resultStr = "Syntax Error";
 		conn.send(resultStr+'\n');
@@ -189,7 +230,6 @@ def main(conn):
 
 class RequestHandler(SocketServer.BaseRequestHandler):
 	def handle(self):
-		sys.stderr.write("Client connected.\n");
 		conn = self.request;
 		conn.settimeout(1);
 		main(conn);
