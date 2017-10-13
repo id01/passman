@@ -30,6 +30,8 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
+* 10/12/2017 v0.6.1 (id01)
+	* Made cpp backend more universal  
 * 10/11/2017 v0.6.0 (id01)
 	* Windows Form GUI done!  
 	* Switched scrypt library to scrypt-jane, which seems better.  
