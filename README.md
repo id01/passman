@@ -2,34 +2,41 @@
 Main module, containing server code.
 
 ## Description
-This is a (no longer so) simple password manager that runs on mySQL.  
+This is a (no longer so) simple password manager that runs on SQLAlchemy (doesn't work on SQLite).  
 Its primary feature is that the server knows a minimal amount of data about the user.  
-Account names and usernames are hashed, and passwords are encrypted.  
-Passwords can be gotten through an HTTP service.  
-Note: It's probably a good idea to put HTTP authentication on backend/wwwroot/setup.php.  
+Account names and usernames are hashed (quickly, though), and passwords are encrypted.  
+Passwords can be gotten through an HTTP(s) service.  
 
 ## Installation
 ### Backend Installation
 Install dependencies.  
-Go to backend/ and run make.  
-Run python passwordservice.py to run the service.  
+Go to backend/setup and run make.  
+Run python wrapper.py to run the service in debug mode.  
+Configure stuff @ backend/config.py and set up your SQL database accordingly.  
 Replace the string specified in backend/wwwroot/setup.php with the sha256 hash of the signup password.  
-Symlink backend/wwwroot to a folder in your webserver wwwroot.  
-Add the user that will be running passwordservice to the group www-data. (Don't run as www-data though)  
+Use the wsgi file at backend/passman.wsgi to run on a webserver like Apache.  
 
 ## Features
 Double encryption using AES-256 and Salsa20.  
-Master Key and passwords never transmitted over internet.  
+Master Key and Plaintext never transmitted over internet.  
 Server has zero knowledge of any passwords or master key or private key.  
-Passwords stored on server encrypted with AES and Salsa20, generated at client side after secure elliptic-curve handshake.  
+Passwords stored on server encrypted with AES and Salsa20 are generated at client side after secure elliptic-curve handshake.  
 Centralized password management without need for copying any files.  
 
 ## Other Notes
-ALWAYS run the registration web server over SSL. Otherwise, the world (and all your passwords) will be destroyed.  
+ALWAYS run the web server over SSL. Otherwise, the world (and all your passwords) will be destroyed.  
 Just kidding! But seriously. Don't run the webserver over plaintext. It's not good for your health.  
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
+* 10/19/2017 v1.0.0-rc0 (id01)
+	* Moved username hashes to bigints instead of strings, increasing efficiency.  
+	* Salted account hashes with usernames and made them Integers, deferring let's-crack-everyone's-account-hashes attacks.  
+	* Moved the entire backend to Flask and SQLAlchemy to get rid of PHP requirement.  
+	* Removed MD5 dependency. Hashing with Scrypt now.  
+	* Made the same modifications to the C++ and C# as the Javascript.  
+	* Almost stable now!  
+	* Note: Webextension generation script is probably broken right now.  
 * 10/12/2017 v0.6.1 (id01)
 	* Made cpp backend more universal  
 * 10/11/2017 v0.6.0 (id01)
@@ -152,10 +159,9 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 
 ## Credits
 * jsrsasign (jsrsasign license)  
-* JavaScript-MD5 (MIT license)  
 * jQuery (MIT license)  
 * sjcl (BSD 2.0 license)  
-* Python, WebExtensions, Javascript, PHP, HTML, C, Shell and every other programming language I used :)  
+* Python, WebExtensions, Javascript, PHP, HTML, all the Cs, Shell and every other programming language I used :)  
 Also, special thanks to my PC, router, Raspberry Pi, and web browser for making this possible :D Lol  
 Note: Licenses for software used can be found in licenses/  
 
@@ -164,5 +170,7 @@ Note: Licenses for software used can be found in licenses/
 * CryptoPP  
 * Python 2.x  
 * Python 2.x development files  
-* MySQL  
+* Python Flask  
+* Python SQLAlchemy  
+* Uglifyjs+Uglifycss  
 * An http server  

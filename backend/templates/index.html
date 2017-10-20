@@ -1,17 +1,10 @@
 <html>
 <head>
-<script src="bootstrap/bootstrap.js"></script>
-<link rel="stylesheet" type="text/css" href="css/index.css">
+<script src="{{ staticURL }}bootstrap/bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ staticURL }}css/index.css">
 </head>
 <body>
-<script>
-async function changeFloatForm(a){
-	$("#floatform").fadeOut(400,"swing",function(){
-		document.getElementById('floatform').src=a;
-		$("#floatform").fadeIn(400,"swing");
-	});
-}
-</script>
+<script src="{{ staticURL }}javascript/index.min.js"></script>
 <div id="navbar">
 <span class="header" id="getheader"><a class="ha" href="javascript:changeFloatForm('getpass.html')">Get Password</a></span>
 <span class="header" id="addheader"><a class="ha" href="javascript:changeFloatForm('addpass.html')">Add Password</a></span>

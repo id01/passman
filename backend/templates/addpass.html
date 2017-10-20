@@ -1,12 +1,12 @@
 <html>
 <head>
-<script src="bootstrap/bootstrap.js"></script>
-<link rel="stylesheet" type="text/css" href="css/form.css">
+<script src="{{ staticURL }}bootstrap/bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ staticURL }}css/form.css">
 <style>#plength::-webkit-inner-spin-button {-webkit-appearance:none; margin:0;}</style>
 </head>
 <body>
-<script src="javascript/global.min.js"></script>
-<script src="javascript/addpass2.min.js"></script>
+<script src="{{ staticURL }}javascript/global.min.js"></script>
+<script src="{{ staticURL }}javascript/addpass2.min.js"></script>
 <div id="inputdiv">
 <div id="notification" class="notification" align="center">Please Login.</div>
 <form id="challengeform" action="javascript:void(0);">
@@ -29,6 +29,6 @@ ECC priv key: <input type="text" id="ecckey"><br/>
 Encrypted Password: <input type="text" id="encryptedpass" name="passwordcrypt"><br/>
 Signature: <input type="text" id="signature" name="signature"><br/>
 </form>
-<script src="javascript/addpassHandlers.js"></script>
+<script src="{{ staticURL }}javascript/addpassHandlers.js"></script>
 </body>
 </html>

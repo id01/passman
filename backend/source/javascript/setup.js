@@ -14,7 +14,7 @@ function generateSubmitForm() {
 	document.getElementById("status").innerHTML = "Encrypting secrets...";
 	setTimeout(function() {
 		// Transfer data to hidden form
-		document.getElementById('userhash').value = md5(username.toLowerCase());
+		document.getElementById('userhash').value = simplehashuser(username.toLowerCase());
 		document.getElementById('public').value = b64.fromBits(hex.toBits(new KJUR.asn1.x509.SubjectPublicKeyInfo(ec).getEncodedHex()));
 		// Encrypt private key
 		document.getElementById('status').style.display = "block";

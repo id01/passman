@@ -5,8 +5,13 @@ function submitAction(event) {
 	notification.className = "notification";
 	notification.innerHTML = "Please wait...";
 	var getForm = document.getElementById("getform");
-	var userhash = md5(getForm.querySelector("[name=userin]").value.toLowerCase());
-	jQuery.post(urllocation+"getpass.php", "userhash=" + userhash + "&account=" + md5(getForm.querySelector("[name=account]").value.toLowerCase()), updateEncrypted, "text");
+	var userhash = simplehashuser(getForm.querySelector("[name=userin]").value.toLowerCase());
+	jQuery.post(urllocation+"getpass.php", "userhash=" + userhash + "&account=" +
+		simplehashaccount(getForm.querySelector("[name=account]").value.toLowerCase(), userhash), updateEncrypted, "text"
+	).fail(function(){
+		notification.className = "notification_failure";
+		notification.innerHTML = "AJAX Error.";
+	});
 }
 // Decrypts the response to submitAction and writes to decrypted.
 function updateEncrypted(data) {

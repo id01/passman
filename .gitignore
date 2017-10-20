@@ -3,8 +3,4 @@
 *.o
 *.so
 webextension/webextension
-backend/wwwroot/bootstrap/bootstrap.js
-backend/wwwroot/javascript/*.min.js
-backend/mysql_setup_done
-linux_cli/libscrypt
-linux_cli/linux_cli/cli
+backend/static

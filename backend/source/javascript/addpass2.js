@@ -1,3 +1,10 @@
+// Handler for an AJAX Error
+function ajaxError() {
+	var notification = document.getElementById('notification');
+	notification.className = "notification_failure";
+	notification.innerHTML = "AJAX Error.";
+}
+
 // Submits the challenge form
 function challengeSubmitAction(event) {
 	event.preventDefault();
@@ -5,8 +12,11 @@ function challengeSubmitAction(event) {
 	notification.className = "notification";
 	notification.innerHTML = "Please wait...";
 	var cForm = document.getElementById("challengeform");
-	cForm.querySelector("[name=userhash]").value = md5(cForm.querySelector("[name=userin]").value.toLowerCase());
-	jQuery.post(urllocation+"addpass_challenge.php", "userhash=" + cForm.querySelector("[name=userhash]").value + "&account=" + md5(cForm.querySelector("[name=account]").value.toLowerCase()), buildVerifyForm, "text");
+	var userhash = simplehashuser(cForm.querySelector("[name=userin]").value.toLowerCase());
+	cForm.querySelector("[name=userhash]").value = userhash;
+	jQuery.post(urllocation+"addpass_challenge.php", "userhash=" + cForm.querySelector("[name=userhash]").value +
+		"&account=" + simplehashaccount(cForm.querySelector("[name=account]").value.toLowerCase(), userhash), buildVerifyForm, "text"
+	).fail(ajaxError);
 }
 // Function to generate a password
 function makePassword() {
@@ -56,7 +66,7 @@ function buildVerifyForm(data) {
 				var sig = new KJUR.crypto.Signature({"alg": "SHA256withECDSA"});
 				sig.init('-----BEGIN PRIVATE KEY-----'+prvKeyB64+'-----END PRIVATE KEY-----');
 				sig.updateString(document.getElementById("challenge").value+'$'+
-					md5(document.getElementById('account_input').value.toLowerCase())+'$'+
+					simplehashaccount(document.getElementById('account_input').value.toLowerCase(), document.getElementById("challengeform").querySelector("[name=userhash]").value)+'$'+
 					document.getElementById('encryptedpass').value);
 				var sighexder = sig.sign();
 				var sighex = KJUR.crypto.ECDSA.asn1SigToConcatSig(sighexder);
@@ -72,13 +82,13 @@ function verifySubmitAction() {
 	var vForm = document.getElementById("verifyform");
 	jQuery.post(urllocation+"addpass_verify.php", "userhash=" + vForm.querySelector("[name=userhash]").value +
 	            "&passwordcrypt=" + vForm.querySelector("[name=passwordcrypt]").value.replace(/\+/g, '%2B') +
-	            "&signature=" + vForm.querySelector("[name=signature]").value.replace(/\+/g, '%2B'), printVerifyResult, "text");
+	            "&signature=" + vForm.querySelector("[name=signature]").value.replace(/\+/g, '%2B'), printVerifyResult, "text").fail(ajaxError);
 }
 // Prints the result of the verifyForm submission.
 function printVerifyResult(data) {
 	var notification = document.getElementById("notification");
 	notification.className = "notification_failure";
-	if (data.startsWith("Password already exists!") || data.startsWith("Invalid Signature")) {
+	if (data.startsWith("Password already exists!") || data.startsWith("Invalid Signature") || data.startsWith("Password too long")) {
 		notification.innerHTML = "Result: " + data;
 	} else if (data == "") {
 		notification.innerHTML = "Unknown Error.";

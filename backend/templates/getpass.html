@@ -1,11 +1,11 @@
 <html>
 <head>
-<script src="bootstrap/bootstrap.js"></script>
-<link rel="stylesheet" type="text/css" href="css/form.css">
+<script src="{{ staticURL }}bootstrap/bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ staticURL }}css/form.css">
 </head>
 <body>
-<script src="javascript/global.min.js"></script>
-<script src="javascript/getpass2.min.js"></script>
+<script src="{{ staticURL }}javascript/global.min.js"></script>
+<script src="{{ staticURL }}javascript/getpass2.min.js"></script>
 <div id="inputdiv">
 <div id="notification" class="notification" align="center">Please Login.</div>
 <form id="getform" method="post" action="javascript:void(0);">
@@ -19,6 +19,6 @@
 Account Password: <input id="decrypted" type="password" disabled="true">
 <button id="copybutton" type="button">Copy ></button>
 </div>
-<script src="javascript/getpassHandlers.js"></script>
+<script src="{{ staticURL }}javascript/getpassHandlers.js"></script>
 </body>
 </html>
