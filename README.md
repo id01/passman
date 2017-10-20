@@ -17,8 +17,8 @@ Replace the string specified in backend/wwwroot/setup.php with the sha256 hash o
 Use the wsgi file at backend/passman.wsgi to run on a webserver like Apache.  
 Optional (after make all):  
 ```
-make addcdns # Adds CDNs from cdnjs for jQuery and jsrsasign. Configure make accordingly.  
-make addgzip # Adds gzip compression for HTML templates. Configure accordingly.  
+make addcdns # Adds CDNs from bootstraps.html in the working directory of Makefile (note: slashes need to be escaped). Modify Makefile accordingly.  
+make addgzip # Adds gzip compression for HTML templates.  
 ```
 
 ## Features
