@@ -94,3 +94,10 @@ addcdns: bootstraps.html $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTM
 	sed -i "s/<!-- bootstrap -->/`cat bootstraps.html`/g" $(HTMLOUTDIR)/setup.html;
 	sed -i "s/<!-- bootstrap -->/`cat bootstraps.html`/g" $(HTMLOUTDIR)/getpass.html;
 	sed -i "s/<!-- bootstrap -->/`cat bootstraps.html`/g" $(HTMLOUTDIR)/addpass.html;
+
+.PHONY: addgzip
+addgzip: $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
+	gzip -c9 $(HTMLOUTDIR)/index.html > $(HTMLOUTDIR)/index.html.gz
+	gzip -c9 $(HTMLOUTDIR)/setup.html > $(HTMLOUTDIR)/setup.html.gz
+	gzip -c9 $(HTMLOUTDIR)/getpass.html > $(HTMLOUTDIR)/getpass.html.gz
+	gzip -c9 $(HTMLOUTDIR)/addpass.html > $(HTMLOUTDIR)/addpass.html.gz

@@ -15,6 +15,11 @@ Run python wrapper.py to run the service in debug mode.
 Configure stuff @ backend/config.py and set up your SQL database accordingly.  
 Replace the string specified in backend/wwwroot/setup.php with the sha256 hash of the signup password.  
 Use the wsgi file at backend/passman.wsgi to run on a webserver like Apache.  
+Optional (after make all):  
+```
+make addcdns # Adds CDNs from cdnjs for jQuery and jsrsasign. Configure make accordingly.  
+make addgzip # Adds gzip compression for HTML templates. Configure accordingly.  
+```
 
 ## Features
 Double encryption using AES-256 and Salsa20.  
@@ -29,8 +34,11 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
-* 10/19/2017 v1.0.0-rc0 .1\<\<\ Where do I put that?? (id01)  
+* 10/19/2017 v1.0.0-rc1 (id01)  
 	* Some extra security stuff  
+	* Some efficiency optimization (including gzipping html pages)  
+	* Fixed error 500 glitch when CSRF check failed  
+	* Moved passHash to config file  
 * 10/19/2017 v1.0.0-rc0 (id01)
 	* Moved username hashes to bigints instead of strings, increasing efficiency.  
 	* Salted account hashes with usernames and made them Integers, deferring let's-crack-everyone's-account-hashes attacks.  

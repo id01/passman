@@ -10,7 +10,7 @@ import passwords; # Backend Python file
 # CSRF Checker. HTTP_REFERER will be None if the user is from a different site
 def csrfCheck(request, correct):
 	if not request.referrer or not request.referrer[-len(correct):] == correct:
-		raise ValueError("Referer incorrect!");
+		flask.abort(403);
 
 # SETUP function @ setup...
 @app.route('/setup.php', methods=['POST'])
@@ -18,8 +18,7 @@ def processSetup():
 	csrfCheck(request, "setup.html");
 	time.sleep(1);
 	try:
-		passHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"; # SHA256 hash of password. Change this.
-		if hashlib.sha256(request.form["auth"]).hexdigest() != passHash:
+		if hashlib.sha256(request.form["auth"]).hexdigest() != config.passHash:
 			return Response("Server password incorrect.", mimetype='text/text');
 		else:
 			return Response(passwords.main(passwords.commands.SETUP, request.form["userhash"], None,
@@ -74,10 +73,24 @@ def processADDVERIFY():
 # Shows a template HTML page.
 @app.route('/<page_name>.html', methods=['GET'])
 def showStaticPage(page_name):
-	with open("html/"+page_name+".html", 'r') as templateFile:
-		resp = flask.Response(templateFile.read());
-		resp.headers['Content-Security-Policy'] = config.csp;
-		return resp;
+	# Do GZIP if allowed
+	if os.path.isfile("html/"+page_name+".html.gz") and 'gzip' in request.headers.get('Accept-Encoding', '').lower():
+		gzipping = True;
+	else:
+		gzipping = False;
+	# If gzipping, gzip. Else, just send the file.
+	if gzipping:
+		with open("html/"+page_name+".html.gz", 'r') as templateFile:
+			resp = Response(templateFile.read());
+			resp.headers['Content-Security-Policy'] = config.csp;
+			resp.headers['Content-Encoding'] = 'gzip';
+			resp.headers['Vary'] = 'Accept-Encoding';
+			return resp;
+	else:
+		with open("html/"+page_name+".html", 'r') as templateFile:
+			resp = Response(templateFile.read());
+			resp.headers['Content-Security-Policy'] = config.csp;
+			return resp;
 
 # Shows the index page
 @app.route('/', methods=['GET'])

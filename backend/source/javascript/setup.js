@@ -1,4 +1,5 @@
 function generateSubmitForm() {
+	// Get user input
 	var username = document.getElementById('username_input').value;
 	var password = document.getElementById('password_input').value;
 	var notification = document.getElementById("notification");
@@ -10,7 +11,7 @@ function generateSubmitForm() {
 	// Generate key pair
 	notification.innerHTML = "Generating secrets...";
 	var ec = new KJUR.crypto.ECDSA({"curve": "secp256k1"});
-	var keypair = ec.generateKeyPairHex();
+	ec.generateKeyPairHex();
 	// Encrypt secrets
 	notification.innerHTML = "Encrypting secrets...";
 	setTimeout(function() {
