@@ -13,7 +13,7 @@ ROOTDIR = ../..
 # NOTE: All slashes must be escaped with a backslash. Also, this can be replaced with a path to a CDN.
 STATICURL = static\/# << Make sure that hashtag has no space before it.
 
-all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpass2.min.js $(JSOUTDIR)/getpass2.min.js $(JSOUTDIR)/setup.min.js $(JSOUTDIR)/global.min.js $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(CSSOUTDIR)/index.css $(CSSOUTDIR)/form.css $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
+all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpass2.min.js $(JSOUTDIR)/getpass2.min.js $(JSOUTDIR)/setup.min.js $(JSOUTDIR)/global.min.js $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/setupHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(CSSOUTDIR)/index.css $(CSSOUTDIR)/form.css $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
 
 $(PYDIR)/ecdsalib.so: ecdsalib.cpp
 	# Building ecdsalib...
@@ -43,6 +43,10 @@ $(JSOUTDIR)/getpassHandlers.js: $(JSINDIR)/getpassHandlers.js
 	# Copying getpassHandlers.js...
 	cp $(JSINDIR)/getpassHandlers.js $(JSOUTDIR)/getpassHandlers.js
 
+$(JSOUTDIR)/setupHandlers.js: $(JSINDIR)/setupHandlers.js
+	# Copying setupHandlers.js...
+	cp $(JSINDIR)/setupHandlers.js $(JSOUTDIR)/setupHandlers.js
+
 $(JSOUTDIR)/index.min.js: $(JSINDIR)/index.js
 	# Building index.js...
 	echo -n "async " > /tmp/index.min.js.part1
@@ -52,6 +56,7 @@ $(JSOUTDIR)/index.min.js: $(JSINDIR)/index.js
 
 $(BSOUTDIR)/bootstrap.js: $(BSINDIR)/newline $(BSINDIR)/jquery.min.js $(BSINDIR)/jsrsasign.js $(BSINDIR)/sjcl.js $(BSINDIR)/sjcl-salsa.min.js
 	# Building bootstrap.js...
+	# Modify this to add CDNs
 	cat $(BSINDIR)/jquery.min.js $(BSINDIR)/newline > /tmp/bootstrap_large.js
 	cat $(BSINDIR)/jsrsasign.js $(BSINDIR)/newline >> /tmp/bootstrap_large.js
 	cat $(BSINDIR)/sjcl.js $(BSINDIR)/newline $(BSINDIR)/sjcl-salsa.min.js >> /tmp/bootstrap_large.js
@@ -82,3 +87,10 @@ $(HTMLOUTDIR)/getpass.html: $(HTMLINDIR)/getpass.html
 $(HTMLOUTDIR)/addpass.html: $(HTMLINDIR)/addpass.html
 	# Building addpass.html...
 	sed "s/{{ staticURL }}/$(STATICURL)/g" $(HTMLINDIR)/addpass.html > $(HTMLOUTDIR)/addpass.html
+
+.PHONY: addcdns
+addcdns: bootstraps.html $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
+	sed -i "s/<!-- bootstrap -->/`cat bootstraps.html`/g" $(HTMLOUTDIR)/index.html;
+	sed -i "s/<!-- bootstrap -->/`cat bootstraps.html`/g" $(HTMLOUTDIR)/setup.html;
+	sed -i "s/<!-- bootstrap -->/`cat bootstraps.html`/g" $(HTMLOUTDIR)/getpass.html;
+	sed -i "s/<!-- bootstrap -->/`cat bootstraps.html`/g" $(HTMLOUTDIR)/addpass.html;

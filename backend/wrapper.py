@@ -1,7 +1,7 @@
 import time, os, hashlib, base64; # Standard libs
 
 import flask;
-from flask import Flask, session, url_for, escape, request;
+from flask import Flask, session, url_for, escape, request, Response;
 
 import config; # Configuration Python file
 from config import app; # Import app
@@ -86,4 +86,4 @@ def showIndexPage():
 
 # Run Main Loop in Debug Mode if running standalone
 if __name__ == '__main__':
-	app.run('127.0.0.1', 5000, True);
+	app.run('0.0.0.0', 5000, True);
