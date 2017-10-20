@@ -4,3 +4,4 @@
 *.so
 webextension/webextension
 backend/static
+backend/html

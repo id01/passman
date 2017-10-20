@@ -6,7 +6,7 @@ BSOUTDIR = ../static/bootstrap
 CSSINDIR = ../source/css
 CSSOUTDIR = ../static/css
 HTMLINDIR = ../templates
-HTMLOUTDIR = ../static
+HTMLOUTDIR = ../html
 PYDIR = ../
 ROOTDIR = ../..
 

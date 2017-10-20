@@ -9,3 +9,7 @@ function changeFloatForm(a){
 		}
 	});
 }
+
+// Add event listeners
+document.getElementById("getha").addEventListener("click", function(e) { e.preventDefault(); changeFloatForm('getpass.html'); });
+document.getElementById("addha").addEventListener("click", function(e) { e.preventDefault(); changeFloatForm('addpass.html'); });

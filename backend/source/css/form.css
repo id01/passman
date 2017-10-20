@@ -105,3 +105,11 @@ body {
 #copybutton:hover {
 	opacity: 1;
 }
+
+/* For addpass only, removes up and down arrows on password length */
+#plength::-webkit-inner-spin-button {-webkit-appearance:none; margin:0;}
+
+/* Used instead of display:none */
+.hidden {
+	display: none;
+}
