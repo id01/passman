@@ -1,0 +1,4 @@
+/* Used instead of display:none. This is hidden only for setup.html */
+.hidden {
+	display: none;
+}

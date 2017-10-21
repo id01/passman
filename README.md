@@ -34,11 +34,12 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
-* 10/19/2017 v1.0.0-rc1 (id01)  
+* 10/21/2017 v1.0.0-rc1 (id01)  
 	* Some extra security stuff  
 	* Some efficiency optimization (including gzipping html pages)  
 	* Fixed error 500 glitch when CSRF check failed  
 	* Moved passHash to config file  
+	* Minor bug fixes  
 * 10/19/2017 v1.0.0-rc0 (id01)
 	* Moved username hashes to bigints instead of strings, increasing efficiency.  
 	* Salted account hashes with usernames and made them Integers, deferring let's-crack-everyone's-account-hashes attacks.  

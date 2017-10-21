@@ -13,7 +13,7 @@ ROOTDIR = ../..
 # NOTE: All slashes must be escaped with a backslash. Also, this can be replaced with a path to a CDN.
 STATICURL = static\/# << Make sure that hashtag has no space before it.
 
-all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpass2.min.js $(JSOUTDIR)/getpass2.min.js $(JSOUTDIR)/setup.min.js $(JSOUTDIR)/global.min.js $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/setupHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(CSSOUTDIR)/index.css $(CSSOUTDIR)/form.css $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
+all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/setupHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(CSSOUTDIR)/index.css $(HTMLOUTDIR)/index.html
 
 $(PYDIR)/ecdsalib.so: ecdsalib.cpp
 	# Building ecdsalib...
@@ -47,7 +47,7 @@ $(JSOUTDIR)/setupHandlers.js: $(JSINDIR)/setupHandlers.js
 	# Copying setupHandlers.js...
 	cp $(JSINDIR)/setupHandlers.js $(JSOUTDIR)/setupHandlers.js
 
-$(JSOUTDIR)/index.min.js: $(JSINDIR)/index.js
+$(JSOUTDIR)/index.min.js: $(JSINDIR)/index.js $(JSOUTDIR)/addpass2.min.js $(JSOUTDIR)/getpass2.min.js $(JSOUTDIR)/setup.min.js $(JSOUTDIR)/global.min.js
 	# Building index.js...
 	echo -n "async " > /tmp/index.min.js.part1
 	uglifyjs $(JSINDIR)/index.js --mangle sort,eval --compress dead_code=true > /tmp/index.min.js.part2
@@ -63,7 +63,7 @@ $(BSOUTDIR)/bootstrap.js: $(BSINDIR)/newline $(BSINDIR)/jquery.min.js $(BSINDIR)
 	uglifyjs /tmp/bootstrap_large.js > $(BSOUTDIR)/bootstrap.js
 	rm /tmp/bootstrap_large.js
 
-$(CSSOUTDIR)/index.css: $(CSSINDIR)/index.css
+$(CSSOUTDIR)/index.css: $(CSSINDIR)/index.css $(CSSOUTDIR)/form.css $(CSSOUTDIR)/hidden.css
 	# Building index.css...
 	uglifycss $(CSSINDIR)/index.css > $(CSSOUTDIR)/index.css
 
@@ -71,7 +71,11 @@ $(CSSOUTDIR)/form.css: $(CSSINDIR)/form.css
 	# Building form.css...
 	uglifycss $(CSSINDIR)/form.css > $(CSSOUTDIR)/form.css
 
-$(HTMLOUTDIR)/index.html: $(HTMLINDIR)/index.html
+$(CSSOUTDIR)/hidden.css: $(CSSINDIR)/hidden.css
+	# Building hidden.css...
+	uglifycss $(CSSINDIR)/hidden.css > $(CSSOUTDIR)/hidden.css
+
+$(HTMLOUTDIR)/index.html: $(HTMLINDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
 	# Building index.html...
 	echo "s/{{ staticURL }}/$(STATICURL)/g";
 	sed "s/{{ staticURL }}/$(STATICURL)/g" $(HTMLINDIR)/index.html > $(HTMLOUTDIR)/index.html
