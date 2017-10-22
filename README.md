@@ -40,6 +40,7 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 	* Fixed error 500 glitch when CSRF check failed  
 	* Moved passHash to config file  
 	* Minor bug fixes  
+	* More minor bug fixes  
 * 10/19/2017 v1.0.0-rc0 (id01)
 	* Moved username hashes to bigints instead of strings, increasing efficiency.  
 	* Salted account hashes with usernames and made them Integers, deferring let's-crack-everyone's-account-hashes attacks.  

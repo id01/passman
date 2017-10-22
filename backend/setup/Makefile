@@ -13,7 +13,7 @@ ROOTDIR = ../..
 # NOTE: All slashes must be escaped with a backslash. Also, this can be replaced with a path to a CDN.
 STATICURL = static\/# << Make sure that hashtag has no space before it.
 
-all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/setupHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(CSSOUTDIR)/index.css $(HTMLOUTDIR)/index.html
+all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/setupHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(CSSOUTDIR)/index.css $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
 
 $(PYDIR)/ecdsalib.so: ecdsalib.cpp
 	# Building ecdsalib...
@@ -75,7 +75,7 @@ $(CSSOUTDIR)/hidden.css: $(CSSINDIR)/hidden.css
 	# Building hidden.css...
 	uglifycss $(CSSINDIR)/hidden.css > $(CSSOUTDIR)/hidden.css
 
-$(HTMLOUTDIR)/index.html: $(HTMLINDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
+$(HTMLOUTDIR)/index.html: $(HTMLINDIR)/index.html
 	# Building index.html...
 	echo "s/{{ staticURL }}/$(STATICURL)/g";
 	sed "s/{{ staticURL }}/$(STATICURL)/g" $(HTMLINDIR)/index.html > $(HTMLOUTDIR)/index.html

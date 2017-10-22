@@ -8,23 +8,19 @@ C	S
 |	|
 |======>| (C) Hi Server, I'd like to add a password.
 |	|
-| <=====| (S) Okay, but you must sign it along with this seed.
-|	|
-|======>| (C) Hi Server, I'd like my private and public asymmetric keys.
-|	|
-| <=====| (S) Here is your encrypted private asymmetric key, and your public asymmetric key.
+| <=====| (S) Okay, but you must sign it along with this challenge. By the way, here is your encrypted private asymmetric key.
 |	|
 |======>| (C) Hi Server, here is my password and signature.
 |	|
-|	| (S) Verify signature. If correct, add password to database and reply valid. Else, say incorrect signature and end.
+|	| (S) Verify signature. If correct, add password to database and reply success. Else, say incorrect signature and end.
 |	|
-| <=====| (S) Valid/Invalid, close connection.
+| <=====| (S) Valid/Invalid.
 
 Getting password:
 C	S
 |	|
 |======>| (C) Hi Server, I'd like to get my password.
 |	|
-| <=====| (S) Here is your encrypted password. Close connection.
+| <=====| (S) Here is your encrypted password.
 |	|
 |	| (C) Try to decrypt password using key.
