@@ -37,7 +37,7 @@ def processSetup():
 			else:
 				return Response("Server password incorrect.", mimetype='text/text');
 		else:
-			return Response("Server configuration error. Either passHash or passFile must be specified.", mimetype='text/text');
+			return Response("Signups are disabled.", mimetype='text/text');
 	except KeyError:
 		return Response("All fields must be specified.", mimetype='text/text');
 
@@ -120,6 +120,6 @@ def showJSMemFile():
 # Run Main Loop in Debug Mode if running standalone
 if __name__ == '__main__':
 	app.run('0.0.0.0', 5000, True);
-elif config.secret_key == "\xec\x0b\xa4N\xce\x9a\x8e\xa6\xadd\xcd'U\xe3\xf1\xc2\x7f\x93\x15/\x10\xf1\r\t_\xc6x\x12\x1b\xa0\xe9+" or passHash == "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08":
+elif config.secret_key == "\xec\x0b\xa4N\xce\x9a\x8e\xa6\xadd\xcd'U\xe3\xf1\xc2\x7f\x93\x15/\x10\xf1\r\t_\xc6x\x12\x1b\xa0\xe9+" or config.passHash == "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08":
 	print "Please change the password hash and secret key in the configuration file before deploying this software.";
 	exit(254);
