@@ -10,12 +10,14 @@ def sign32BitInteger(i):
 
 # Create UserCryptoKeys Model
 class UserCryptoKeys(db.Model):
+	__table_args__ = {'mysql_charset': 'ascii'} # There will be no base64 in UTF8
 	userhash = db.Column(db.BigInteger, primary_key=True);
 	public = db.Column(db.String(128), nullable=False, unique=True);
 	private = db.Column(db.String(256), nullable=False, unique=True);
 
 # Create UserPassword Model
 class UserPassword(db.Model):
+	__table_args__ = {'mysql_charset': 'ascii'} # There will be no base64 in UTF8
 	id = db.Column(db.BigInteger, primary_key=True);
 	userhash = db.Column(db.BigInteger, nullable=True);
 	account = db.Column(db.Integer, nullable=True);

@@ -1,3 +1,14 @@
+// JavaScript wrapper for Scrypt-Jane
+function scrypt_hex(plaintext, salt, Nfactor, pfactor, rfactor, size) {
+	return Module.ccall('scrypt_hex', 'string', ['string', 'number', 'string', 'number', 'number', 'number', 'number', 'number'],
+		[plaintext, plaintext.length, salt, salt.length, Nfactor, pfactor, rfactor, size]); // Should be 13, 3, 0 for Nfactor, pfactor, rfactor
+}
+// Function to derive keys using scrypt
+function scryptkeydev(key, salt) {
+	var saltBits = hex.toBits(hex.fromBits(salt));
+	return sjcl.codec.hex.toBits(scrypt_hex(hex.fromBits(str.toBits(key)), hex.fromBits(salt), 13, 3, 0, 64));
+}
+
 var urllocation = ""; // Empty string means in the current directory.
 // Encryption/Decryption procedures
 var hex = sjcl.codec.hex;
@@ -13,7 +24,7 @@ function sjclencrypt(plaintext, key) {
 	// Create Values
 	var salt = new Uint32Array(4); window.crypto.getRandomValues(salt);
 	var iv = new Uint32Array(4); window.crypto.getRandomValues(iv);
-	var derived_key = sjclkeydev(key, salt);
+	var derived_key = scryptkeydev(key, salt);
 	// AES Encryption
 	var prp = new sjcl.cipher.aes(sjcl.hash.sha256.hash(derived_key.concat(0)));
 	var ciphertextaes = sjcl.mode.gcm.encrypt(prp, plaintext, iv);
@@ -30,7 +41,7 @@ function sjcldecrypt(ciphertextall, key) {
 	var salt = ciphertextall.slice(0, 4);
 	var iv = ciphertextall.slice(4, 8);
 	var ciphertext = ciphertextall.slice(8);
-	var derived_key = sjclkeydev(key, salt);
+	var derived_key = scryptkeydev(key, salt);
 	// Salsa20 Decryption
 	var salsa = new sjcl.cipher.salsa20(sjcl.hash.sha256.hash(derived_key.concat(~0)), iv.slice(1, 3));
 	var ciphertextaes = salsa.decrypt(ciphertext);

@@ -7,3 +7,4 @@ backend/static
 backend/html
 backend/setup/bootstraps.html
 backend/setup/backup.sh
+backend/scrypt-jane.js.mem

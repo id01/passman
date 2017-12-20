@@ -1,21 +1,27 @@
+// Global vars for challengeForm, verifyForm, and notification.
+var cForm, vForm, notif;
+function initVars() {
+	notif = document.getElementById("notification");
+	cForm = document.getElementById("challengeform");
+	vForm = document.getElementById("verifyform");
+}
+
 // Handler for an AJAX Error
 function ajaxError() {
-	var notification = document.getElementById('notification');
-	notification.className = "notification_failure";
-	notification.innerHTML = "AJAX Error.";
+	notif.className = "notification_failure";
+	notif.innerHTML = "AJAX Error.";
 }
 
 // Submits the challenge form
 function challengeSubmitAction(event) {
 	event.preventDefault();
-	var notification = document.getElementById("notification");
-	notification.className = "notification";
-	notification.innerHTML = "Please wait...";
-	var cForm = document.getElementById("challengeform");
+	notif.className = "notification";
+	notif.innerHTML = "Please wait...";
 	var userhash = simplehashuser(cForm.querySelector("[name=userin]").value.toLowerCase());
 	cForm.querySelector("[name=userhash]").value = userhash;
+	vForm.querySelector("[name=accounthash]").value = simplehashaccount(cForm.querySelector("[name=account]").value.toLowerCase(), userhash);
 	jQuery.post(urllocation+"addpass_challenge.php", "userhash=" + cForm.querySelector("[name=userhash]").value +
-		"&account=" + simplehashaccount(cForm.querySelector("[name=account]").value.toLowerCase(), userhash), buildVerifyForm, "text"
+		"&account=" + vForm.querySelector("[name=accounthash]").value, buildVerifyForm, "text"
 	).fail(ajaxError);
 }
 // Function to generate a password
@@ -33,25 +39,39 @@ function makePassword() {
 // Called by challengeSubmitAction. Builds the verifyForm input
 function buildVerifyForm(data) {
 	// Copy username
-	document.getElementById("verifyform").querySelector("[name=userhash]").value = document.getElementById("challengeform").querySelector("[name=userhash]").value;
+	vForm.querySelector("[name=userhash]").value = cForm.querySelector("[name=userhash]").value;
 	// Parse data
-	var dataSplit = data.split('\n');
-	document.getElementById("challenge").value = dataSplit[0];
+	var dataSplit = data.trim('\n').split('\n');
+	vForm.querySelector("[name=challenge]").value = dataSplit[0];
 	// Check if error occured
+	if (dataSplit.length != 3) {
+		notif.className = "notification_failure";
+		if (dataSplit.length == 0) {
+			notif.innerHTML = "Unknown Error.";
+		} else {
+			notif.innerHTML = dataSplit[0];
+		}
+		return;
+	}
 	if (!dataSplit[1].startsWith("VALID")) {
-		document.getElementById('notification').className = "notification_failure";
-		document.getElementById('notification').innerHTML = dataSplit[1];
+		notif.className = "notification_failure";
+		notif.innerHTML = dataSplit[1];
+		return;
+	}
+	if (!dataSplit[2].startsWith("VALID")) {
+		notif.className = "notification_failure";
+		notif.innerHTML = dataSplit[2];
 		return;
 	}
 	// Decrypt Secrets
-	document.getElementById('notification').innerHTML += ' <span id="notif_text">Decrypting Secrets...</span><span id="notif_status"></span>';
+	notif.innerHTML += ' <span id="notif_text">Decrypting Secrets...</span><span id="notif_status"></span>';
 	setTimeout(function() {
 		try {
 			var passwd = document.getElementById('password_input').value;
 			document.getElementById('ecckey').value = b64.fromBits(sjcldecrypt(b64.toBits(dataSplit[1].substring(6)), passwd));
 		} catch (err) {
-			document.getElementById('notification').className = "notification_failure";
-			document.getElementById('notification').innerHTML = "Incorrect Password.";
+			notif.className = "notification_failure";
+			notif.innerHTML = "Incorrect Password.";
 			return;
 		}
 		// Encrypt Password
@@ -65,8 +85,9 @@ function buildVerifyForm(data) {
 				var prvKeyB64 = document.getElementById('ecckey').value;
 				var sig = new KJUR.crypto.Signature({"alg": "SHA256withECDSA"});
 				sig.init('-----BEGIN PRIVATE KEY-----'+prvKeyB64+'-----END PRIVATE KEY-----');
-				sig.updateString(document.getElementById("challenge").value+'$'+
-					simplehashaccount(document.getElementById('account_input').value.toLowerCase(), document.getElementById("challengeform").querySelector("[name=userhash]").value)+'$'+
+				sig.updateString(dataSplit[2].substring(6)+'$'+
+					vForm.querySelector("[name=userhash]").value+'$'+
+					vForm.querySelector("[name=accounthash]").value+'$'+
 					document.getElementById('encryptedpass').value);
 				var sighexder = sig.sign();
 				var sighex = KJUR.crypto.ECDSA.asn1SigToConcatSig(sighexder);
@@ -79,23 +100,23 @@ function buildVerifyForm(data) {
 }
 // Called by buildVerifyForm. Submits the verifyForm.
 function verifySubmitAction() {
-	var vForm = document.getElementById("verifyform");
 	jQuery.post(urllocation+"addpass_verify.php", "userhash=" + vForm.querySelector("[name=userhash]").value +
+	            "&account=" + vForm.querySelector("[name=accounthash]").value +
+	            "&challenge=" + vForm.querySelector("[name=challenge]").value.replace(/\+/g, '%2B') +
 	            "&passwordcrypt=" + vForm.querySelector("[name=passwordcrypt]").value.replace(/\+/g, '%2B') +
 	            "&signature=" + vForm.querySelector("[name=signature]").value.replace(/\+/g, '%2B'), printVerifyResult, "text").fail(ajaxError);
 }
 // Prints the result of the verifyForm submission.
 function printVerifyResult(data) {
-	var notification = document.getElementById("notification");
-	notification.className = "notification_failure";
+	notif.className = "notification_failure";
 	if (data.startsWith("Password already exists!") || data.startsWith("Invalid Signature") || data.startsWith("Password too long")) {
-		notification.innerHTML = "Result: " + data;
+		notif.innerHTML = "Result: " + data;
 	} else if (data == "") {
-		notification.innerHTML = "Unknown Error.";
+		notif.innerHTML = "Unknown Error.";
 	} else {
 		document.getElementById("resultdiv").className = "resultdiv_visible";
-		notification.className = "notification_success";
-		notification.innerHTML = "Result: " + data;
+		notif.className = "notification_success";
+		notif.innerHTML = "Result: " + data;
 		if (document.location.search == "?extension" && data == "Success!") {
 			copyAction();
 		}

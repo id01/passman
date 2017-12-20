@@ -44,14 +44,12 @@ def processGet():
 @app.route('/addpass_challenge.php', methods=['POST'])
 def processADDCHALLENGE():
 	csrfCheck(request, "addpass.html");
-	# Some more checks, start a session for ADD and store things
+	# Some more checks, start a session for ADD and return the challenge, ECC encrypted private key, and hmac.
 	challenge = base64.b64encode(os.urandom(24));
 	try:
-		session["userhash"] = request.form["userhash"];
-		session["challenge"] = challenge;
-		session["account"] = request.form["account"];
-		return Response(challenge+'\n'+passwords.main(passwords.commands.GETECC, request.form["userhash"], None),
-			mimetype='text/text');
+		eccenc = passwords.main(passwords.commands.GETECC, request.form["userhash"], None);
+		addsession_hmac = passwords.main(passwords.commands.ADDCHAL, request.form["userhash"], request.form["account"], challenge);
+		return Response(challenge+'\n'+eccenc+addsession_hmac, mimetype='text/text');
 	except KeyError:
 		return Response("All fields must be specified.", mimetype='text/text');
 
@@ -59,14 +57,11 @@ def processADDCHALLENGE():
 @app.route('/addpass_verify.php', methods=['POST'])
 def processADDVERIFY():
 	csrfCheck(request, "addpass.html");
-	# Some more checks, continue the session for ADD and retrieve data. Some checks, then run ADD.
+	# Continue the session for ADD.
 	try:
-		if session["userhash"] != request.form["userhash"]:
-			return Response("Userhash invalid.", mimetype='text/text');
-		else:
-			return Response(passwords.main(passwords.commands.ADD, session["userhash"], session["account"],
-				(session["challenge"], request.form["passwordcrypt"], request.form["signature"])),
-				mimetype='text/text');
+		return Response(passwords.main(passwords.commands.ADDVERIFY, request.form["userhash"],
+			request.form["account"], (request.form["challenge"], request.form["passwordcrypt"],
+			request.form["signature"])), mimetype='text/text');
 	except KeyError:
 		return Response("All fields must be specified.", mimetype='text/text');
 
@@ -97,6 +92,15 @@ def showStaticPage(page_name):
 def showIndexPage():
 	return showStaticPage('index');
 
+# Memory Initializer for Javascript
+@app.route('/scrypt-jane.js.mem', methods=['GET'])
+def showMemFile():
+	with open("scrypt-jane.js.mem", "r") as memFile:
+		return memFile.read();
+
 # Run Main Loop in Debug Mode if running standalone
 if __name__ == '__main__':
 	app.run('0.0.0.0', 5000, True);
+elif config.secret_key == "\xec\x0b\xa4N\xce\x9a\x8e\xa6\xadd\xcd'U\xe3\xf1\xc2\x7f\x93\x15/\x10\xf1\r\t_\xc6x\x12\x1b\xa0\xe9+" or passHash == "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08":
+	print "Please change the password hash and secret key in the configuration file before deploying this software.";
+	exit(254);
