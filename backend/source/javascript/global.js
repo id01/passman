@@ -14,11 +14,6 @@ var urllocation = ""; // Empty string means in the current directory.
 var hex = sjcl.codec.hex;
 var b64 = sjcl.codec.base64;
 var str = sjcl.codec.utf8String;
-// Function to derive keys using sjcl
-function sjclkeydev(key, salt) {
-	var saltBits = hex.toBits(hex.fromBits(salt));
-	return sjcl.misc.scrypt(key, saltBits, 16384, 8, 1, 512);
-}
 // Function to encrypt using sjcl
 function sjclencrypt(plaintext, key) {
 	// Create Values

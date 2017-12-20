@@ -13,7 +13,7 @@ ROOTDIR = ../..
 # NOTE: All slashes must be escaped with a backslash. Also, this can be replaced with a path to a CDN.
 STATICURL = static\/# << Make sure that hashtag has no space before it.
 
-all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/setupHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(PYDIR)/scrypt-jane.js.mem $(CSSOUTDIR)/index.css $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
+all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/setupHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(CSSOUTDIR)/index.css $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
 
 $(PYDIR)/ecdsalib.so: ecdsalib.cpp
 	# Building ecdsalib...
@@ -57,15 +57,12 @@ $(JSOUTDIR)/index.min.js: $(JSINDIR)/index.js $(JSOUTDIR)/addpass2.min.js $(JSOU
 $(BSOUTDIR)/bootstrap.js: $(BSINDIR)/newline $(BSINDIR)/jquery.min.js $(BSINDIR)/jsrsasign.js $(BSINDIR)/sjcl.js $(BSINDIR)/sjcl-salsa.min.js $(BSINDIR)/scrypt-jane.js
 	# Building bootstrap.js...
 	# Modify this to add CDNs
-	cat $(BSINDIR)/jquery.min.js $(BSINDIR)/newline > /tmp/bootstrap_large.js
-	cat $(BSINDIR)/jsrsasign.js $(BSINDIR)/newline >> /tmp/bootstrap_large.js
+#	cat $(BSINDIR)/jquery.min.js $(BSINDIR)/newline > /tmp/bootstrap_large.js
+#	cat $(BSINDIR)/jsrsasign.js $(BSINDIR)/newline >> /tmp/bootstrap_large.js
 	cat $(BSINDIR)/sjcl.js $(BSINDIR)/newline $(BSINDIR)/sjcl-salsa.min.js $(BSINDIR)/newline >> /tmp/bootstrap_large.js
 	cat $(BSINDIR)/scrypt-jane.js >> /tmp/bootstrap_large.js
-	uglifyjs /tmp/bootstrap_large.js > $(BSOUTDIR)/bootstrap.js
+	uglifyjs --mangle --compress dead_code=true /tmp/bootstrap_large.js > $(BSOUTDIR)/bootstrap.js
 	rm /tmp/bootstrap_large.js
-
-$(PYDIR)/scrypt-jane.js.mem: $(BSINDIR)/scrypt-jane.js.mem
-	cp $(BSINDIR)/scrypt-jane.js.mem $(PYDIR)/scrypt-jane.js.mem
 
 $(CSSOUTDIR)/index.css: $(CSSINDIR)/index.css $(CSSOUTDIR)/form.css $(CSSOUTDIR)/hidden.css
 	# Building index.css...
@@ -98,17 +95,18 @@ $(HTMLOUTDIR)/addpass.html: $(HTMLINDIR)/addpass.html
 
 .PHONY: addcdns
 addcdns: bootstraps.html $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
-	sed -i "s/<!-- bootstrap -->/`cat bootstraps.html`/g" $(HTMLOUTDIR)/index.html;
-	sed -i "s/<!-- bootstrap -->/`cat bootstraps.html`/g" $(HTMLOUTDIR)/setup.html;
-	sed -i "s/<!-- bootstrap -->/`cat bootstraps.html`/g" $(HTMLOUTDIR)/getpass.html;
-	sed -i "s/<!-- bootstrap -->/`cat bootstraps.html`/g" $(HTMLOUTDIR)/addpass.html;
+	sed -i "s/<!-- bootstrap -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/index.html;
+	sed -i "s/<!-- bootstrap -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/setup.html;
+	sed -i "s/<!-- bootstrap -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/getpass.html;
+	sed -i "s/<!-- bootstrap -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/addpass.html;
 
 .PHONY: addgzip
-addgzip: $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
+addgzip: $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html $(HTMLOUTDIR)/scrypt-jane.js.mem
 	gzip -c9 $(HTMLOUTDIR)/index.html > $(HTMLOUTDIR)/index.html.gz
 	gzip -c9 $(HTMLOUTDIR)/setup.html > $(HTMLOUTDIR)/setup.html.gz
 	gzip -c9 $(HTMLOUTDIR)/getpass.html > $(HTMLOUTDIR)/getpass.html.gz
 	gzip -c9 $(HTMLOUTDIR)/addpass.html > $(HTMLOUTDIR)/addpass.html.gz
+	gzip -c9 $(HTMLOUTDIR)/scrypt-jane.js.mem > $(HTMLOUTDIR)/scrypt-jane.js.mem.gz
 
 .PHONY: debug
 debug: $(JSINDIR)/global.js $(JSINDIR)/setup.js $(JSINDIR)/getpass2.js $(JSINDIR)/addpass2.js

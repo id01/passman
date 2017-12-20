@@ -34,10 +34,11 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
-* xx/xx/xxxx v1.0.0 (id01)  
+* 12/20/2017 v1.0.0 (id01)  
 	* Sessionlessness (using HMACs)  
 	* Scrypt hashing in browser using asm.js for major performance improvement, especially on weaker CPUs.  
 		* Source code over [here](https://github.com/id01/scrypt-jane/tree/emcc)  
+		* Some more minor optimizations  
 * 10/21/2017 v0.7.1 (id01)  
 	* Some extra security stuff  
 	* Some efficiency optimization (including gzipping html pages)  

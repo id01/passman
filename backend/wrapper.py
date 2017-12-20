@@ -65,38 +65,41 @@ def processADDVERIFY():
 	except KeyError:
 		return Response("All fields must be specified.", mimetype='text/text');
 
-# Shows a template HTML page.
-@app.route('/<page_name>.html', methods=['GET'])
+# Function to show a static page
 def showStaticPage(page_name):
 	# Do GZIP if allowed
-	if os.path.isfile("html/"+page_name+".html.gz") and 'gzip' in request.headers.get('Accept-Encoding', '').lower():
+	if os.path.isfile("html/"+page_name+".gz") and 'gzip' in request.headers.get('Accept-Encoding', '').lower():
 		gzipping = True;
 	else:
 		gzipping = False;
 	# If gzipping, gzip. Else, just send the file.
 	if gzipping:
-		with open("html/"+page_name+".html.gz", 'r') as templateFile:
+		with open("html/"+page_name+".gz", 'r') as templateFile:
 			resp = Response(templateFile.read());
 			resp.headers['Content-Security-Policy'] = config.csp;
 			resp.headers['Content-Encoding'] = 'gzip';
 			resp.headers['Vary'] = 'Accept-Encoding';
 			return resp;
 	else:
-		with open("html/"+page_name+".html", 'r') as templateFile:
+		with open("html/"+page_name, 'r') as templateFile:
 			resp = Response(templateFile.read());
 			resp.headers['Content-Security-Policy'] = config.csp;
 			return resp;
 
-# Shows the index page
+# Shows a template HTML page.
+@app.route('/<page_name>.html', methods=['GET'])
+def showHTMLPage(page_name):
+	return showStaticPage(page_name+".html");
+
+# Shows the index page at /
 @app.route('/', methods=['GET'])
 def showIndexPage():
-	return showStaticPage('index');
+	return showStaticPage("index.html");
 
-# Memory Initializer for Javascript
+# Shows the scrypt-jane.wasm file at /scrypt-jane.wasm
 @app.route('/scrypt-jane.js.mem', methods=['GET'])
-def showMemFile():
-	with open("scrypt-jane.js.mem", "r") as memFile:
-		return memFile.read();
+def showJSMemFile():
+	return showStaticPage("scrypt-jane.js.mem");
 
 # Run Main Loop in Debug Mode if running standalone
 if __name__ == '__main__':
