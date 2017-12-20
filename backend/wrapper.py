@@ -24,7 +24,7 @@ def processSetup():
 			else:
 				return Response(passwords.main(passwords.commands.SETUP, request.form["userhash"], None,
 					(request.form["public"], request.form["encryptedprivate"])), mimetype='text/text');
-		else if config.passFile:
+		elif config.passFile:
 			with open(config.passFile, 'r') as passFile:
 				passFileContents = passFile.read();
 				passwordHash = hashlib.sha256(request.form["auth"]).hexdigest()+'\n';
