@@ -10,4 +10,5 @@ db = SQLAlchemy(app);
 cdnurl = "localhost:5000 https://cdnjs.cloudflare.com"; # Change this if CDN is being used for static files.
 csp = "default-src *; script-src %s; object-src %s; media-src 'none'; frame-src 'self'; form-action 'self'" % (cdnurl, cdnurl);
 passHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"; # SHA256 hash of password. Change this. Default password is 'test'
+passFile = None; # Writable file containing one-time-use signup hashes
 secret_key = "\xec\x0b\xa4N\xce\x9a\x8e\xa6\xadd\xcd'U\xe3\xf1\xc2\x7f\x93\x15/\x10\xf1\r\t_\xc6x\x12\x1b\xa0\xe9+"; # Set this to a 256 bit randomly generated string.

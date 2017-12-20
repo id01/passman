@@ -18,13 +18,29 @@ def processSetup():
 	csrfCheck(request, "setup.html");
 	time.sleep(1);
 	try:
-		if hashlib.sha256(request.form["auth"]).hexdigest() != config.passHash:
-			return Response("Server password incorrect.", mimetype='text/text');
+		if config.passHash:
+			if hashlib.sha256(request.form["auth"]).hexdigest() != config.passHash:
+				return Response("Server password incorrect.", mimetype='text/text');
+			else:
+				return Response(passwords.main(passwords.commands.SETUP, request.form["userhash"], None,
+					(request.form["public"], request.form["encryptedprivate"])), mimetype='text/text');
+		else if config.passFile:
+			with open(config.passFile, 'r') as passFile:
+				passFileContents = passFile.read();
+				passwordHash = hashlib.sha256(request.form["auth"]).hexdigest()+'\n';
+			if passwordHash in passFileContents:
+				passFileContents = passFileContents.replace(passwordHash, '');
+				with open(config.passFile, 'w') as passFile:
+					passFile.write(passFileContents);
+				return Response(passwords.main(passwords.commands.SETUP, request.form["userhash"], None,
+					(request.form["public"], request.form["encryptedprivate"])), mimetype='text/text');
+			else:
+				return Response("Server password incorrect.", mimetype='text/text');
 		else:
-			return Response(passwords.main(passwords.commands.SETUP, request.form["userhash"], None,
-				(request.form["public"], request.form["encryptedprivate"])), mimetype='text/text');
+			return Response("Server configuration error. Either passHash or passFile must be specified.", mimetype='text/text');
 	except KeyError:
 		return Response("All fields must be specified.", mimetype='text/text');
+
 
 # GET function @ getpass...
 @app.route('/getpass.php', methods=['POST'])
