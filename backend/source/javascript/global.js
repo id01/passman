@@ -52,10 +52,10 @@ function sjcldecrypt(ciphertextall, key) {
 }
 // Function to hash username and account because why not?
 function simplehashuser(user) {
-	return hex.fromBits(sjcl.misc.scrypt(user, '', 256, 4, 1, 64)); // Parameters chosen for speed - username should be public
+	return scrypt_hex(hex.fromBits(str.toBits(user)), '', 7, 2, 0, 8); // Parameters chosen for speed - username should be public
 }
 function simplehashaccount(account, userhash) {
-	return hex.fromBits(sjcl.misc.scrypt(account, userhash, 4096, 8, 1, 32)); // Not intended to be very secure
+	return scrypt_hex(hex.fromBits(str.toBits(account)), hex.fromBits(str.toBits(userhash)), 11, 3, 0, 4); // Not intended to be very secure
 }
 
 // Copies the decrypted password.
