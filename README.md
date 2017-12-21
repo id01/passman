@@ -16,10 +16,15 @@ Configure stuff @ backend/config.py and set up your SQL database accordingly.
 Replace the string specified in backend/wwwroot/setup.php with the sha256 hash of the signup password.  
 Use the wsgi file at backend/passman.wsgi to run on a webserver like Apache.  
 Optional (after make all):  
-```
-make addcdns # Adds CDNs from bootstraps.html in the working directory of Makefile (note: slashes need to be escaped). Modify Makefile accordingly.  
-make addgzip # Adds gzip compression for HTML templates.  
-```
+
+	make addcdns # Adds CDNs from bootstraps.html in the working directory of Makefile (note: slashes need to be escaped). Modify Makefile accordingly.  
+	make addgzip # Adds gzip compression for HTML templates.  
+
+Note:  
+If you want to rebuild scrypt-jane.js and scrypt-jane.wasm using emcc, this is the command I used:  
+
+	emcc scrypt-jane.c -O3 -DSCRYPT_SALSA -DSCRYPT_SHA256 -s WASM=1 -s EXPORTED_FUNCTIONS='["_scrypt_hex"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall"]' -s TOTAL_MEMORY=33554432 -o scrypt-jane.js --closure 1  
+
 
 ## Features
 Double encryption using AES-256 and Salsa20.  
@@ -34,6 +39,9 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
+* 12/20/2017 v1.0.1 (id01)  
+	* Moved from asm.js to wasm.  
+	* Content-Types are now shown.  
 * 12/20/2017 v1.0.0 (id01)  
 	* Sessionlessness (using HMACs)  
 	* Scrypt hashing in browser using asm.js for major performance improvement, especially on weaker CPUs.  

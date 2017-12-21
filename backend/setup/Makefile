@@ -13,7 +13,7 @@ ROOTDIR = ../..
 # NOTE: All slashes must be escaped with a backslash. Also, this can be replaced with a path to a CDN.
 STATICURL = static\/# << Make sure that hashtag has no space before it.
 
-all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/setupHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(CSSOUTDIR)/index.css $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
+all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/setupHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(CSSOUTDIR)/index.css $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html $(HTMLOUTDIR)/scrypt-jane.wasm
 
 $(PYDIR)/ecdsalib.so: ecdsalib.cpp
 	# Building ecdsalib...
@@ -93,6 +93,10 @@ $(HTMLOUTDIR)/addpass.html: $(HTMLINDIR)/addpass.html
 	# Building addpass.html...
 	sed "s/{{ staticURL }}/$(STATICURL)/g" $(HTMLINDIR)/addpass.html > $(HTMLOUTDIR)/addpass.html
 
+$(HTMLOUTDIR)/scrypt-jane.wasm: $(HTMLINDIR)/scrypt-jane.wasm
+	# Copying scrypt-jane.wasm...
+	cp $(HTMLINDIR)/scrypt-jane.wasm $(HTMLOUTDIR)/scrypt-jane.wasm
+
 .PHONY: addcdns
 addcdns: bootstraps.html $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
 	sed -i "s/<!-- bootstrap -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/index.html;
@@ -101,12 +105,12 @@ addcdns: bootstraps.html $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTM
 	sed -i "s/<!-- bootstrap -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/addpass.html;
 
 .PHONY: addgzip
-addgzip: $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html $(HTMLOUTDIR)/scrypt-jane.js.mem
+addgzip: $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html $(HTMLOUTDIR)/scrypt-jane.wasm
 	gzip -c9 $(HTMLOUTDIR)/index.html > $(HTMLOUTDIR)/index.html.gz
 	gzip -c9 $(HTMLOUTDIR)/setup.html > $(HTMLOUTDIR)/setup.html.gz
 	gzip -c9 $(HTMLOUTDIR)/getpass.html > $(HTMLOUTDIR)/getpass.html.gz
 	gzip -c9 $(HTMLOUTDIR)/addpass.html > $(HTMLOUTDIR)/addpass.html.gz
-	gzip -c9 $(HTMLOUTDIR)/scrypt-jane.js.mem > $(HTMLOUTDIR)/scrypt-jane.js.mem.gz
+	gzip -c9 $(HTMLOUTDIR)/scrypt-jane.wasm > $(HTMLOUTDIR)/scrypt-jane.wasm.gz
 
 .PHONY: debug
 debug: $(JSINDIR)/global.js $(JSINDIR)/setup.js $(JSINDIR)/getpass2.js $(JSINDIR)/addpass2.js
