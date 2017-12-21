@@ -23,7 +23,7 @@ Optional (after make all):
 Note:  
 If you want to rebuild scrypt-jane.js and scrypt-jane.wasm using emcc, this is the command I used:  
 
-	emcc scrypt-jane.c -O3 -DSCRYPT_SALSA -DSCRYPT_SHA256 -s WASM=1 -s EXPORTED_FUNCTIONS='["_scrypt_hex"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall"]' -s TOTAL_MEMORY=33554432 -o scrypt-jane.js --closure 1  
+	emcc scrypt-jane.c -O3 -DSCRYPT_SALSA -DSCRYPT_SHA256 -s WASM=1 -s EXPORTED_FUNCTIONS='["_scrypt_hex"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall"]' -s TOTAL_MEMORY=33554432 -o scrypt-jane.js  
 
 
 ## Features
