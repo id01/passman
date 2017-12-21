@@ -59,7 +59,8 @@ $(BSOUTDIR)/bootstrap.js: $(BSINDIR)/newline $(BSINDIR)/jquery.min.js $(BSINDIR)
 	# Modify this to add CDNs
 #	cat $(BSINDIR)/jquery.min.js $(BSINDIR)/newline > /tmp/bootstrap_large.js
 #	cat $(BSINDIR)/jsrsasign.js $(BSINDIR)/newline >> /tmp/bootstrap_large.js
-	cat $(BSINDIR)/sjcl.js $(BSINDIR)/newline $(BSINDIR)/sjcl-salsa.min.js $(BSINDIR)/newline >> /tmp/bootstrap_large.js
+#	cat $(BSINDIR)/sjcl.js $(BSINDIR)/newline >> /tmp/bootstrap_large.js
+	cat $(BSINDIR)/sjcl-salsa.min.js $(BSINDIR)/newline >> /tmp/bootstrap_large.js
 	cat $(BSINDIR)/scrypt-jane.js >> /tmp/bootstrap_large.js
 	uglifyjs --mangle --compress dead_code=true /tmp/bootstrap_large.js > $(BSOUTDIR)/bootstrap.js
 	rm /tmp/bootstrap_large.js
@@ -101,12 +102,11 @@ addcdns: bootstraps.html $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTM
 	sed -i "s/<!-- bootstrap -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/addpass.html;
 
 .PHONY: addgzip
-addgzip: $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html $(HTMLOUTDIR)/scrypt-jane.wasm
+addgzip: $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
 	gzip -c9 $(HTMLOUTDIR)/index.html > $(HTMLOUTDIR)/index.html.gz
 	gzip -c9 $(HTMLOUTDIR)/setup.html > $(HTMLOUTDIR)/setup.html.gz
 	gzip -c9 $(HTMLOUTDIR)/getpass.html > $(HTMLOUTDIR)/getpass.html.gz
 	gzip -c9 $(HTMLOUTDIR)/addpass.html > $(HTMLOUTDIR)/addpass.html.gz
-	gzip -c9 $(HTMLOUTDIR)/scrypt-jane.wasm > $(HTMLOUTDIR)/scrypt-jane.wasm.gz
 
 .PHONY: debug
 debug: $(JSINDIR)/global.js $(JSINDIR)/setup.js $(JSINDIR)/getpass2.js $(JSINDIR)/addpass2.js
