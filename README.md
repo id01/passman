@@ -23,7 +23,8 @@ Optional (after make all):
 Note:  
 If you want to rebuild scrypt-jane.js and scrypt-jane.wasm using emcc, this is the command I used:  
 
-	emcc scrypt-jane.c -O3 -DSCRYPT_SALSA -DSCRYPT_SHA256 -s WASM=1 -s EXPORTED_FUNCTIONS='["_scrypt_hex"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall"]' -s TOTAL_MEMORY=33554432 -o scrypt-jane.js  
+	emcc scrypt-jane.c -O3 -DSCRYPT_SALSA -DSCRYPT_SHA256 -s EXPORTED_FUNCTIONS='["_scrypt_hex"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall"]' -s TOTAL_MEMORY=33554432 -o sj.js --memory-init-file 0 --closure 1  
+	echo "function buildModule() {`cat sj.js` return b;} var Module = buildModule();" > scrypt-jane.js  # Note: Variable 'b' was found by opening the file and finding which var Module was assigned to. You may need to use a different variable name.  
 
 
 ## Features
@@ -39,8 +40,8 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
-* 12/20/2017 v1.0.1 (id01)  
-	* Moved from asm.js to wasm.  
+* 12/21/2017 v1.0.1 (id01)  
+	* More optimizations, and Javascript is now standalone.  
 	* Content-Types are now shown.  
 * 12/20/2017 v1.0.0 (id01)  
 	* Sessionlessness (using HMACs)  

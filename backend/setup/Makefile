@@ -13,7 +13,7 @@ ROOTDIR = ../..
 # NOTE: All slashes must be escaped with a backslash. Also, this can be replaced with a path to a CDN.
 STATICURL = static\/# << Make sure that hashtag has no space before it.
 
-all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/setupHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(CSSOUTDIR)/index.css $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html $(HTMLOUTDIR)/scrypt-jane.wasm
+all: $(PYDIR)/ecdsalib.so $(JSOUTDIR)/addpassHandlers.js $(JSOUTDIR)/getpassHandlers.js $(JSOUTDIR)/setupHandlers.js $(JSOUTDIR)/index.min.js $(BSOUTDIR)/bootstrap.js $(CSSOUTDIR)/index.css $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
 
 $(PYDIR)/ecdsalib.so: ecdsalib.cpp
 	# Building ecdsalib...
@@ -92,10 +92,6 @@ $(HTMLOUTDIR)/getpass.html: $(HTMLINDIR)/getpass.html
 $(HTMLOUTDIR)/addpass.html: $(HTMLINDIR)/addpass.html
 	# Building addpass.html...
 	sed "s/{{ staticURL }}/$(STATICURL)/g" $(HTMLINDIR)/addpass.html > $(HTMLOUTDIR)/addpass.html
-
-$(HTMLOUTDIR)/scrypt-jane.wasm: $(HTMLINDIR)/scrypt-jane.wasm
-	# Copying scrypt-jane.wasm...
-	cp $(HTMLINDIR)/scrypt-jane.wasm $(HTMLOUTDIR)/scrypt-jane.wasm
 
 .PHONY: addcdns
 addcdns: bootstraps.html $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html

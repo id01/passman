@@ -114,11 +114,6 @@ def showHTMLPage(page_name):
 def showIndexPage():
 	return showStaticPage("index.html", "text/html");
 
-# Shows the scrypt-jane.wasm file at /scrypt-jane.wasm
-@app.route('/scrypt-jane.wasm', methods=['GET'])
-def showWASMFile():
-	return showStaticPage("scrypt-jane.wasm", "application/wasm");
-
 # Run Main Loop in Debug Mode if running standalone
 if __name__ == '__main__':
 	app.run('0.0.0.0', 5000, True);
