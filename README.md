@@ -40,6 +40,8 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
+* 01/08/2018 v1.0.2 (id01)  
+	* Combined linux_cli and windows_gui to client/.  
 * 12/21/2017 v1.0.1 (id01)  
 	* More optimizations, and Javascript is now standalone.  
 	* Content-Types are now shown.  
