@@ -10,6 +10,9 @@ HTMLOUTDIR = ../html
 PYDIR = ../
 ROOTDIR = ../..
 
+# This is the title for the HTML files
+TITLE = Passman
+
 # NOTE: All slashes must be escaped with a backslash. Also, this can be replaced with a path to a CDN.
 STATICURL = static\/# << Make sure that hashtag has no space before it.
 
@@ -79,12 +82,11 @@ $(CSSOUTDIR)/hidden.css: $(CSSINDIR)/hidden.css
 
 $(HTMLOUTDIR)/index.html: $(HTMLINDIR)/index.html
 	# Building index.html...
-	echo "s/{{ staticURL }}/$(STATICURL)/g";
-	sed "s/{{ staticURL }}/$(STATICURL)/g" $(HTMLINDIR)/index.html > $(HTMLOUTDIR)/index.html
+	sed "s/{{ staticURL }}/$(STATICURL)/g" $(HTMLINDIR)/index.html | sed "s/{{ title }}/$(TITLE)/g" - > $(HTMLOUTDIR)/index.html
 
 $(HTMLOUTDIR)/setup.html: $(HTMLINDIR)/setup.html
 	# Building addpass.html...
-	sed "s/{{ staticURL }}/$(STATICURL)/g" $(HTMLINDIR)/setup.html > $(HTMLOUTDIR)/setup.html
+	sed "s/{{ staticURL }}/$(STATICURL)/g" $(HTMLINDIR)/setup.html | sed "s/{{ title }}/$(TITLE)/g" - > $(HTMLOUTDIR)/setup.html
 
 $(HTMLOUTDIR)/getpass.html: $(HTMLINDIR)/getpass.html
 	# Building getpass.html...
@@ -96,10 +98,10 @@ $(HTMLOUTDIR)/addpass.html: $(HTMLINDIR)/addpass.html
 
 .PHONY: addcdns
 addcdns: bootstraps.html $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html
-	sed -i "s/<!-- bootstrap -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/index.html;
-	sed -i "s/<!-- bootstrap -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/setup.html;
-	sed -i "s/<!-- bootstrap -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/getpass.html;
-	sed -i "s/<!-- bootstrap -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/addpass.html;
+	sed -i "s/<!-- bootstraps -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/index.html;
+	sed -i "s/<!-- bootstraps -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/setup.html;
+	sed -i "s/<!-- bootstraps -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/getpass.html;
+	sed -i "s/<!-- bootstraps -->/`sed 's:/:\\\\/:g' bootstraps.html | tr -d '\n'`/g" $(HTMLOUTDIR)/addpass.html;
 
 .PHONY: addgzip
 addgzip: $(HTMLOUTDIR)/index.html $(HTMLOUTDIR)/setup.html $(HTMLOUTDIR)/getpass.html $(HTMLOUTDIR)/addpass.html

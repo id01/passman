@@ -1,15 +1,27 @@
-// Global vars for challengeForm, verifyForm, and notification.
-var cForm, vForm, notif;
+// Global vars for challengeForm, verifyForm, notification, and typeButton.
+var cForm, vForm, notif, tyBut;
 function initVars() {
 	notif = document.getElementById("notification");
 	cForm = document.getElementById("challengeform");
 	vForm = document.getElementById("verifyform");
+	tyBut = document.getElementById("typebutton");
 }
 
 // Handler for an AJAX Error
 function ajaxError() {
 	notif.className = "notification_failure";
 	notif.innerHTML = "AJAX Error.";
+}
+
+// typeButtonValue. Optimization function to shorten this command.
+function tbv() {
+	return parseInt(tyBut.getAttribute("value"));
+}
+// Called by typeButton to change the password type.
+function typeChangeAction() {
+	var passwordTypes = ["A1#", "Ab1", "123", "AbC", "abc", "hex"];
+	tyBut.setAttribute("value", (tbv() + 1) % passwordTypes.length);
+	tyBut.innerHTML = passwordTypes[tbv()];
 }
 
 // Submits the challenge form
@@ -28,11 +40,18 @@ function challengeSubmitAction(event) {
 function makePassword() {
 //	var text = prompt("Enter pass: ", ""); // Uncomment to import passwords
 	var text = "";
-	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!";
-	var choice = new Uint8Array(1);
-	for (var i = 0; i < document.getElementById('plength').value; i++) {
+	var passwordChars = ["ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,.~!@#$%*_+()/-",
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+		"1234567890",
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+		"abcdefghijklmnopqrstuvwxyz",
+		"1234567890abcdef"
+	];
+	var choice = new Uint32Array(1);
+	var plength = parseInt(document.getElementById('plength').value) || 15;
+	for (var i = 0; i < plength; i++) {
 		window.crypto.getRandomValues(choice);
-		text += possible.charAt(choice[0] >> 2);
+		text += passwordChars[tbv()].charAt(choice[0] % passwordChars[tbv()].length);
 	}
 	return text;
 }

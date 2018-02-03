@@ -1,6 +1,6 @@
 <html>
 <head>
-<!-- bootstrap -->
+<!-- bootstraps -->
 <script src="{{ staticURL }}bootstrap/bootstrap.js"></script>
 <link rel="stylesheet" type="text/css" href="{{ staticURL }}css/form.css">
 </head>
@@ -13,14 +13,15 @@
 <p><input type="text" class="forminput" name="userin" placeholder="Username"></p>
 <p><input type="password" class="forminput" id="password_input" placeholder="Password"></p>
 <p><input type="text" class="forminput" name="account" id="account_input" placeholder="Account Name"></p>
-<p><input type="number" class="forminput" id="plength" min="8" max="80" placeholder="Password Length (15)"></p>
+<p><input type="number" class="formsplit_text" id="plength" min="8" max="80" placeholder="Password Length (15)"><!--Empty Space
+--><button id="typebutton" type="button" class="formsplit_button" value="-1"></button></p>
 <span class="hidden"><input type="text" name="userhash"></span>
 <input id="submitbutton" type="submit" class="forminput" value="Add Password >">
 </form>
 </div>
 <div id="resultdiv">
-Account Password: <input id="decrypted" type="password" disabled="true">
-<button id="copybutton" type="button">Copy</button>
+Account Password: <input id="decrypted" type="password" class="formsplit_text" disabled="true">
+<button id="copybutton" type="button" class="formsplit_button">Copy</button>
 </div>
 <form id="verifyform" method="post" class="hidden" action="addpass_verify.php">
 Username Hash: <input type="text" name="userhash"><br/>

@@ -74,8 +74,8 @@ body {
 	animation: flyinfadein 2s forwards;
 }
 
-/* This governs the parts of the output form */
-#decrypted, #copybutton {
+/* This governs a split input or output in the form consisting of a text and button. */
+.formsplit_text, .formsplit_button {
 	color: #ffffff;
 	background-color: #444444;
 	height: 1.6cm;
@@ -84,7 +84,7 @@ body {
 	border: none;
 	opacity: 0.8;
 }
-#decrypted {
+.formsplit_text {
 	font-size: 0.8cm;
 	width: 8cm;
 	border-top-left-radius: 12px;
@@ -92,7 +92,7 @@ body {
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 }
-#copybutton {
+.formsplit_button {
 	font-size: 0.8cm;
 	border-left: 1px solid;
 	border-image: linear-gradient(to bottom, transparent, white, transparent) 10;
@@ -102,7 +102,7 @@ body {
 	border-top-right-radius: 12px;
 	border-bottom-right-radius: 12px;
 }
-#copybutton:hover {
+.formsplit_button:hover {
 	opacity: 1;
 }
 
