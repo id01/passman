@@ -40,28 +40,28 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
-* 02/03/2018 v1.0.3 (id01)  
+* 02/03/2018 v1.0.3  
 	* Rewrote the password generation algorithm for the web UI because of those websites with stupid password requirements.  
 	* Added labels and character list generation for the web UI.  
 	* Some small optimizations by mangling certain global variable names.  
-* 01/08/2018 v1.0.2 (id01)  
+* 01/08/2018 v1.0.2  
 	* Combined linux_cli and windows_gui to client/.  
-* 12/21/2017 v1.0.1 (id01)  
+* 12/21/2017 v1.0.1  
 	* More optimizations, and Javascript is now standalone.  
 	* Content-Types are now shown.  
-* 12/20/2017 v1.0.0 (id01)  
+* 12/20/2017 v1.0.0  
 	* Sessionlessness (using HMACs)  
 	* Scrypt hashing in browser using asm.js for major performance improvement, especially on weaker CPUs.  
 		* Source code over [here](https://github.com/id01/scrypt-jane/tree/emcc)  
 		* Some more minor optimizations  
-* 10/21/2017 v0.7.1 (id01)  
+* 10/21/2017 v0.7.1  
 	* Some extra security stuff  
 	* Some efficiency optimization (including gzipping html pages)  
 	* Fixed error 500 glitch when CSRF check failed  
 	* Moved passHash to config file  
 	* Minor bug fixes  
 	* More minor bug fixes  
-* 10/19/2017 v0.7.0 (id01)
+* 10/19/2017 v0.7.0  
 	* Moved username hashes to bigints instead of strings, increasing efficiency.  
 	* Salted account hashes with usernames and made them Integers, deferring let's-crack-everyone's-account-hashes attacks.  
 	* Moved the entire backend to Flask and SQLAlchemy to get rid of PHP requirement.  
@@ -69,63 +69,63 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 	* Made the same modifications to the C++ and C# as the Javascript.  
 	* Almost stable now!  
 	* Note: Webextension generation script is probably broken right now.  
-* 10/12/2017 v0.6.1 (id01)
+* 10/12/2017 v0.6.1  
 	* Made cpp backend more universal  
-* 10/11/2017 v0.6.0 (id01)
+* 10/11/2017 v0.6.0  
 	* Windows Form GUI done!  
 	* Switched scrypt library to scrypt-jane, which seems better.  
 	* Moved code in setup.py into passwordservice.py; should solve the new user not exists problem.  
 	* Fixed critical security problem in which passwords would be parts of the malloc()ed RAM. I forgot to urandom(). Oops.  
 	* Made some minor improvements to linux_gui.  
 	* Sorry for those strange commits. Git was going weird on me.  
-* 10/09/2017 v0.5.1 (id01)  
+* 10/09/2017 v0.5.1  
 	* Using 16384 iterations of Scrypt instead of 8192 iterations of Scrypt and 8192 of PBKDF2 and hashing them together.  
 	* Switched to Scrypt in SJCL-Master - I just found out they had that included. And it uses bits intead of bytes.  
 	* Updated Scrypt library to scrypt-jane.  
-* 10/07/2017 v0.5.0 (id01)  
+* 10/07/2017 v0.5.0  
 	* Submodules!  
 	* Note: This is now only the README for the backend.  
-* 10/07/2017 v0.4.3 (id01)  
+* 10/07/2017 v0.4.3  
 	* UI changes! Finally!  
-* 10/06/2017 v0.4.2 (id01)  
+* 10/06/2017 v0.4.2  
 	* Added ADD functionality to c++ interface.  
-* 10/05/2017 v0.4.1 (id01)  
+* 10/05/2017 v0.4.1  
 	* Completely overhauled signature mechanism. Now uses (r,s) concat signatures.  
 	* No longer uses Python cryptography library for signatures, instead using a wrapper around CryptoPP.  
-* 10/03/2017 v0.4.0 (id01)  
+* 10/03/2017 v0.4.0  
 	* Finally! After three days and countless hours of screwing around with C and C++ libraries, I have finally created my C++ interface prototype!  
 	* Note: Currently only supports GETing passwords.  
-* 09/27/2017 v0.3.11 (id01)  
+* 09/27/2017 v0.3.11  
 	* Fixed another programming error that caused sha256 hashes used as aes keys to be concatenated with an object (how does that even work?)  
-* 09/26/2017 v0.3.10 (id01)  
+* 09/26/2017 v0.3.10  
 	* Fixed programming error with scrypt that made it derive way too many bytes.  
 	* Broke backwards compatibility.
-* 09/26/2017 v0.3.9 (id01)  
+* 09/26/2017 v0.3.9  
 	* Removed base64 library  
 	* Fixed mySQLdb "MySQL server has gone away" bug after a while  
 	* Fixed global/local variable bug with main function  
-* 09/24/2017 v0.3.8 (id01)  
+* 09/24/2017 v0.3.8  
 	* Removed Google CDN.  
 	* Improved webextension, including auto-copy.  
-* 09/24/2017 v0.3.7 (id01)  
+* 09/24/2017 v0.3.7  
 	* You build wwwroot.  
-* 09/23/2017 v0.3.6 (id01)  
+* 09/23/2017 v0.3.6  
 	* Created webextension for the new stuff  
-* (not committed) v0.3.5 (id01)  
+* (not committed) v0.3.5  
 	* Changed key derivation procedure for more security  
-* (not committed) v0.3.4 (id01)  
+* (not committed) v0.3.4  
 	* Switched back from triplesec to sjcl.  
 	* Rewrote sjcl encryption/decryption procedure.  
 	* Used sjcl+salsa20 as well.  
 	* 2 layers of encryption, less kdf iterations - faster, but less secure (compared to triplesec).  
-* 09/20/2017 v0.3.3 (id01)  
+* 09/20/2017 v0.3.3  
 	* Fixed a glitch where signups will only show after the server has been restarted.  
 	* Tweaked triplesec for faster hashing, though that does mean lower resources used by an attacker.  
 		* Please choose strong passwords for this program... You have one job...  
-* 09/18/2017 v0.3.2 (id01)  
+* 09/18/2017 v0.3.2  
 	* Changed SQL to use only one table for all users.  
 	* Fixed a glitch where signups will only show after the server has been restarted (not really).  
-* 09/18/2017 v0.3.1 (id01)  
+* 09/18/2017 v0.3.1  
 	* Minor fixes in error messages  
 	* Transferred some PHP input verification over to Python  
 	* Rewrote isBase64  
@@ -133,7 +133,7 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 	* Imposed a strict length limit for passwords, reducing the VARCHAR size of each user table  
 	* Locked down passwordservice.py to localhost  
 	* Greatly reduced load on server  
-* (not committed) v0.3.0 (id01)  
+* (not committed) v0.3.0  
 	* Biggest update EVER (again)  
 	* Rewrote most of the entire backend, making the server know even less about the user.  
 		* The server now only ever knows the MD5 hash of the user's username.  
@@ -146,20 +146,20 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 	* ADD now runs completely over HTTP(s)!  
 	* Increased ADD signature security by adding delimiters and by having the user sign the account as well.  
 	* Shows decryption progress  
-* 09/04/2017 v0.2.3 (id01)  
+* 09/04/2017 v0.2.3  
 	* Fixed some small things  
 	* A bit of authentication with wwwroot  
 	* Got ADD to work again  
 	* Merged passwords.py and service.py in backend, greatly improving speed and efficiency  
-* 08/29/2017 v0.2.2 (id01)  
+* 08/29/2017 v0.2.2  
 	* Ditched tcpserver in favor of Python SocketServer  
 	* Used Google CDN due to efficiency... This can be disabled.  
-* 08/28/2017 v0.2.1 (id01)  
+* 08/28/2017 v0.2.1  
 	* Made cli run off communicator, so I only need to change one file instead of two  
 	* No more double-base64ing for AES encrypted stuff!  
 	* Switched from PEM+base64 to DER+base64!  
 	* Made another migrate script, not going to upload it because nobody needs it anyway...  
-* 08/27/2017 v0.2.0 (id01)  
+* 08/27/2017 v0.2.0  
 	* Biggest update EVER  
 	* Rewrote the entire backend, changing ECC/AES libraries to python cryptography  
 	* Rewrote most of the entire webextension so no native messaging, and more portable too  
@@ -171,10 +171,10 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 	* Wrote a script for myself to migrate from the previous version (not availiable on github)  
 	* Changed signing portion of protocol to avoid replay attacks  
 	* Note to self: I should really increase granularity...  
-* 03/16/2017 v0.1.1 (id01)  
+* 03/16/2017 v0.1.1  
 	* Switched AES library back to pyCrypto  
 	* Added webui to get passwords and decrypt them on the client side using sjcl  
-* 03/07/2017 v0.1.0 (id01)  
+* 03/07/2017 v0.1.0  
 	* Initial Commit  
 	* Registration Web UI  
 	* Changed cryptography library twice to something that supports elliptic curve  
@@ -186,7 +186,7 @@ ALWAYS remember to install all dependencies, or else bad things will happen.
 	* Signatures!!!  
 	* Encryption!!!  
 	* Signatures and encryption!!!  
-* 02/28/2017 v0.0.1 (id01)  
+* 02/28/2017 v0.0.1  
 	* Start of project.  
 
 ## Credits
