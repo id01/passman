@@ -1,6 +1,7 @@
 # File Input and Output dirs
 JSINDIR = ../source/javascript
 JSOUTDIR = ../static/javascript
+NAMECACHEDIR = namecache
 BSINDIR = ../source/bootstrap
 BSOUTDIR = ../static/bootstrap
 CSSINDIR = ../source/css
@@ -22,17 +23,23 @@ $(PYDIR)/ecdsalib.so: ecdsalib.cpp
 	# Building ecdsalib...
 	g++ ecdsalib.cpp -shared -O2 -o $(PYDIR)/ecdsalib.so -fPIC -lcryptopp -lpython2.7
 
-$(JSOUTDIR)/addpass2.min.js: $(JSINDIR)/addpass2.js
+$(JSOUTDIR)/addpass2.min.js: $(JSINDIR)/addpass2.js $(NAMECACHEDIR)/addpass2.json
 	# Building addpass2.min.js...
-	uglifyjs $(JSINDIR)/addpass2.js --mangle --compress dead_code=true > $(JSOUTDIR)/addpass2.min.js
+	cp $(NAMECACHEDIR)/addpass2.json /tmp/addpass2.json
+	uglifyjs $(JSINDIR)/addpass2.js --mangle --compress dead_code=true --name-cache /tmp/addpass2.json > $(JSOUTDIR)/addpass2.min.js
+	rm /tmp/addpass2.json
 
-$(JSOUTDIR)/getpass2.min.js: $(JSINDIR)/getpass2.js
+$(JSOUTDIR)/getpass2.min.js: $(JSINDIR)/getpass2.js $(NAMECACHEDIR)/getpass2.json
 	# Building getpass2.min.js...
-	uglifyjs $(JSINDIR)/getpass2.js --mangle --compress dead_code=true > $(JSOUTDIR)/getpass2.min.js
+	cp $(NAMECACHEDIR)/getpass2.json /tmp/getpass2.json
+	uglifyjs $(JSINDIR)/getpass2.js --mangle --compress dead_code=true --name-cache /tmp/getpass2.json > $(JSOUTDIR)/getpass2.min.js
+	rm /tmp/getpass2.json
 
-$(JSOUTDIR)/setup.min.js: $(JSINDIR)/setup.js
+$(JSOUTDIR)/setup.min.js: $(JSINDIR)/setup.js $(NAMECACHEDIR)/setup.json
 	# Building setup.min.js...
-	uglifyjs $(JSINDIR)/setup.js --mangle --compress dead_code=true > $(JSOUTDIR)/setup.min.js
+	cp $(NAMECACHEDIR)/setup.json /tmp/setup.json
+	uglifyjs $(JSINDIR)/setup.js --mangle --compress dead_code=true --name-cache /tmp/setup.json > $(JSOUTDIR)/setup.min.js
+	rm /tmp/setup.json
 
 $(JSOUTDIR)/global.min.js: $(JSINDIR)/global.js
 	# Building global.min.js...

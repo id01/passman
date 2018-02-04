@@ -1,0 +1,9 @@
+{
+  "vars":{
+    "props":{
+      "$notif":"n",
+      "$updateEncrypted":"UE",
+      "$getElementById":"GE"
+    }
+  }
+}

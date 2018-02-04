@@ -1,23 +1,32 @@
+// Optimize getElementById calls
+function getElementById(name) {
+	return document.getElementById(name);
+}
+
+// Global var for notification
+var notif;
+function initVars() {
+	notif = getElementById("notification");
+}
+
 // Submits getForm
 function submitAction(event) {
 	event.preventDefault();
-	var notification = document.getElementById("notification");
-	notification.className = "notification";
-	notification.innerHTML = "Please wait...";
-	var getForm = document.getElementById("getform");
+	notif.className = "notification";
+	notif.innerHTML = "Please wait...";
+	var getForm = getElementById("getform");
 	var userhash = simplehashuser(getForm.querySelector("[name=userin]").value.toLowerCase());
 	jQuery.post(urllocation+"getpass.php", "userhash=" + userhash + "&account=" +
 		simplehashaccount(getForm.querySelector("[name=account]").value.toLowerCase(), userhash), updateEncrypted, "text"
 	).fail(function(){
-		notification.className = "notification_failure";
-		notification.innerHTML = "AJAX Error.";
+		notif.className = "notification_failure";
+		notif.innerHTML = "AJAX Error.";
 	});
 }
 // Decrypts the response to submitAction and writes to decrypted.
 function updateEncrypted(data) {
 	// Get data for vars and activate CBC
-	var passwd = document.getElementById("password_input").value;
-	var notification = document.getElementById("notification");
+	var passwd = getElementById("password_input").value;
 	var encdata = data.split('\n')[0];
 	// Check output
 	if (encdata.substring(0, 6) == "VALID ")
@@ -25,22 +34,22 @@ function updateEncrypted(data) {
 		// Try decryption. If it fails, there is an incorrect password.
 		var encPassword = encdata.substring(6);
 		try {
-			document.getElementById("decrypted").value = str.fromBits(sjcldecrypt(b64.toBits(encPassword), passwd));
-			document.getElementById("resultdiv").className = "resultdiv_visible";
-			notification.className = "notification_success";
-			notification.innerHTML = "Done.";
+			getElementById("decrypted").value = str.fromBits(sjcldecrypt(b64.toBits(encPassword), passwd));
+			getElementById("resultdiv").className = "resultdiv_visible";
+			notif.className = "notification_success";
+			notif.innerHTML = "Done.";
 			if (document.location.search == "?extension") {
 				copyAction();
 			}
 		} catch (err) {
-			document.getElementById('notification').className = "notification_failure";
-			document.getElementById('notification').innerHTML = "Incorrect Password.";
+			notif.className = "notification_failure";
+			notif.innerHTML = "Incorrect Password.";
 			return;
 		}
 	}
 	else
 	{
-		notification.className = "notification_failure";
-		notification.innerHTML = "Error getting entry: "+encdata;
+		notif.className = "notification_failure";
+		notif.innerHTML = "Error getting entry: "+encdata;
 	}
 }

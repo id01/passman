@@ -40,8 +40,10 @@ Just kidding! But seriously. Don't run the webserver over plaintext. It's not go
 ALWAYS remember to install all dependencies, or else bad things will happen.  
 
 ## Changelog
-* 02/02/2018 v1.0.3 (id01)  
+* 02/03/2018 v1.0.3 (id01)  
 	* Rewrote the password generation algorithm for the web UI because of those websites with stupid password requirements.  
+	* Added labels and character list generation for the web UI.  
+	* Some small optimizations by mangling certain global variable names.  
 * 01/08/2018 v1.0.2 (id01)  
 	* Combined linux_cli and windows_gui to client/.  
 * 12/21/2017 v1.0.1 (id01)  

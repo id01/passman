@@ -1,0 +1,18 @@
+{
+  "vars":{
+    "props":{
+      "$notif":"n",
+      "$cForm":"cF",
+      "$vForm":"vF",
+      "$typeButton":"tB",
+      "$passTypes":"pT",
+      "$passNames":"pN",
+      "$ajaxError":"ER",
+      "$buildVerifyForm":"BV",
+      "$printVerifyResult":"PV",
+      "$cFormQuerySelectName":"CQ",
+      "$vFormQuerySelectName":"VQ",
+      "$getElementById":"GE"
+    }
+  }
+}
